@@ -25,7 +25,7 @@ class Config:
     PERMANENT_SESSION_LIFETIME = timedelta(days=7)
     
     # API Keys (Replace with your actual keys for production)
-    GEMINI_API_KEY = "AIzaSyB--ZUNOgfFX6CVPgfO9efb4ph_pn66X2I"
+    GEMINI_API_KEY = "AIzaSyARLgg6blfmauGUDPSwo_mHMrpLHLP22uE"
     STRIPE_SECRET_KEY = "sk_test_your-stripe-secret-key-here"
     STRIPE_PUBLISHABLE_KEY = "pk_test_your-stripe-publishable-key-here"
     STRIPE_WEBHOOK_SECRET = "whsec_your-webhook-secret-here"
