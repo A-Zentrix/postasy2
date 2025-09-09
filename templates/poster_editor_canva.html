@@ -1,0 +1,1816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Poster - {{ poster.title }} - Postasy</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Fabric.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+    <!-- jsPDF for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #4A90E2;
+            --primary-hover: #357ABD;
+            --secondary-color: #50E3C2;
+            --background-dark: #1a1a1a;
+            --panel-dark: #2d2d2d;
+            --panel-light: #3a3a3a;
+            --text-light: #ffffff;
+            --text-muted: #b0b0b0;
+            --border-color: #404040;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family-primary, 'Inter', -apple-system, BlinkMacSystemFont, sans-serif);
+            background-color: var(--background-dark);
+            color: var(--text-light);
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .editor-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Top Toolbar */
+        .top-toolbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(135deg, var(--panel-dark) 0%, var(--panel-light) 100%);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+        }
+
+        .toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .toolbar-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .toolbar-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .toolbar-btn.primary {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .toolbar-btn.primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .toolbar-btn.danger {
+            background: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+
+        /* Left Panel */
+        .left-panel {
+            width: 280px;
+            background: linear-gradient(180deg, var(--panel-dark) 0%, var(--panel-light) 100%);
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            margin-top: 60px;
+            height: calc(100vh - 60px);
+        }
+
+        .panel-section {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .panel-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .tool-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .tool-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .tool-btn.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .tool-btn i {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .tool-btn span {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Color Palette */
+        .color-palette {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .color-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .color-btn:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow);
+        }
+
+        .color-btn.active {
+            border-color: var(--text-light);
+            box-shadow: 0 0 0 2px var(--primary-color);
+        }
+
+        /* Font Controls */
+        .font-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .control-group label {
+            font-size: 12px;
+            color: var(--text-muted);
+            min-width: 60px;
+        }
+
+        .control-group input, .control-group select {
+            flex: 1;
+            padding: 6px 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        /* Company Details Section */
+        .company-details-section {
+            padding: 10px;
+        }
+
+        .company-details-section .form-check {
+            margin-bottom: 8px;
+        }
+
+        .company-details-section .form-check-input {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: var(--border-color);
+        }
+
+        .company-details-section .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .company-details-section .form-check-label {
+            color: var(--text-light);
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .company-details-section .btn {
+            font-size: 11px;
+            padding: 4px 8px;
+        }
+
+        /* Background Color Section */
+        .background-color-section {
+            padding: 10px;
+        }
+
+        .background-color-section .form-control-color {
+            width: 40px;
+            height: 30px;
+            padding: 0;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .background-color-section .btn {
+            font-size: 11px;
+            padding: 4px 8px;
+        }
+
+        .background-presets {
+            margin-top: 10px;
+        }
+
+        .preset-title {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .preset-buttons .btn {
+            font-size: 10px;
+            padding: 3px 6px;
+            margin-bottom: 4px;
+        }
+
+        /* Canvas Container */
+        .canvas-container {
+            flex: 1;
+            margin-top: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(45deg, #2c2c2c 25%, transparent 25%), 
+                        linear-gradient(-45deg, #2c2c2c 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #2c2c2c 75%), 
+                        linear-gradient(-45deg, transparent 75%, #2c2c2c 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+
+        #canvas {
+            box-shadow: var(--shadow-lg);
+            border-radius: 8px;
+        }
+
+        /* Right Panel */
+        .right-panel {
+            width: 250px;
+            background: linear-gradient(180deg, var(--panel-dark) 0%, var(--panel-light) 100%);
+            border-left: 1px solid var(--border-color);
+            overflow-y: auto;
+            margin-top: 60px;
+            height: calc(100vh - 60px);
+        }
+
+        /* Layers Panel */
+        .layers-panel {
+            padding: 20px;
+        }
+
+        .layer-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .layer-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .layer-item.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .layer-item i {
+            margin-right: 10px;
+            font-size: 14px;
+        }
+
+        .layer-item span {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .layer-controls {
+            display: flex;
+            gap: 5px;
+        }
+
+        .layer-btn {
+            padding: 4px 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--text-light);
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 10px;
+        }
+
+        .layer-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Properties Panel */
+        .properties-panel {
+            padding: 20px;
+        }
+
+        .property-group {
+            margin-bottom: 15px;
+        }
+
+        .property-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .property-input {
+            width: 100%;
+            padding: 8px 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1001;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: var(--success-color);
+        }
+
+        .notification.error {
+            background: var(--danger-color);
+        }
+
+        .notification.warning {
+            background: var(--warning-color);
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .left-panel {
+                width: 240px;
+            }
+            .right-panel {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .editor-container {
+                flex-direction: column;
+            }
+            .left-panel, .right-panel {
+                width: 100%;
+                height: auto;
+                max-height: 200px;
+            }
+            .canvas-container {
+                flex: 1;
+                min-height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Toolbar -->
+    <div class="top-toolbar">
+        <div class="toolbar-left">
+            <div class="toolbar-btn" onclick="window.history.back()">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back</span>
+            </div>
+            <div class="toolbar-btn" onclick="savePoster()">
+                <i class="fas fa-save"></i>
+                <span>Save</span>
+            </div>
+            <div class="toolbar-btn" onclick="exportPDF()">
+                <i class="fas fa-file-pdf"></i>
+                <span>Export PDF</span>
+            </div>
+            <div class="toolbar-btn" onclick="exportImage()">
+                <i class="fas fa-download"></i>
+                <span>Export Image</span>
+            </div>
+        </div>
+        <div class="toolbar-right">
+            <div class="toolbar-btn" onclick="undo()">
+                <i class="fas fa-undo"></i>
+                <span>Undo</span>
+            </div>
+            <div class="toolbar-btn" onclick="redo()">
+                <i class="fas fa-redo"></i>
+                <span>Redo</span>
+            </div>
+            <div class="toolbar-btn danger" onclick="deletePoster()">
+                <i class="fas fa-trash"></i>
+                <span>Delete</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="editor-container">
+        <!-- Left Panel -->
+        <div class="left-panel">
+            <!-- Text Tools -->
+            <div class="panel-section">
+                <div class="section-title">
+                    <i class="fas fa-font"></i>
+                    Text Tools
+                </div>
+                <div class="tool-grid">
+                    <div class="tool-btn" onclick="addText()">
+                        <i class="fas fa-plus"></i>
+                        <span>Add Text</span>
+                    </div>
+                    <div class="tool-btn" onclick="addHeading()">
+                        <i class="fas fa-heading"></i>
+                        <span>Heading</span>
+                    </div>
+                    <div class="tool-btn" onclick="addSubheading()">
+                        <i class="fas fa-text-height"></i>
+                        <span>Subheading</span>
+                    </div>
+                    <div class="tool-btn" onclick="addBodyText()">
+                        <i class="fas fa-align-left"></i>
+                        <span>Body Text</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image Tools -->
+            <div class="panel-section">
+                <div class="section-title">
+                    <i class="fas fa-image"></i>
+                    Image Tools
+                </div>
+                <div class="tool-grid">
+                    <div class="tool-btn" onclick="addImage()">
+                        <i class="fas fa-plus"></i>
+                        <span>Add Image</span>
+                    </div>
+                    <div class="tool-btn" onclick="addCompanyLogo()">
+                        <i class="fas fa-building"></i>
+                        <span>Company Logo</span>
+                    </div>
+                    <div class="tool-btn" onclick="enhancedAutoFillWhiteSpace()">
+                        <i class="fas fa-magic"></i>
+                        <span>Auto Fill</span>
+                    </div>
+                    <div class="tool-btn" onclick="addShape()">
+                        <i class="fas fa-shapes"></i>
+                        <span>Shapes</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Company Details Selection -->
+            <div class="panel-section">
+                <div class="section-title">
+                    <i class="fas fa-building"></i>
+                    Company Details
+                </div>
+                <div class="company-details-section">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="addCompanyName" checked>
+                        <label class="form-check-label small" for="addCompanyName">
+                            Company Name
+                        </label>
+                    </div>
+                    
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="addPhone" checked>
+                        <label class="form-check-label small" for="addPhone">
+                            Phone Number
+                        </label>
+                    </div>
+                    
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="addEmail" checked>
+                        <label class="form-check-label small" for="addEmail">
+                            Email Address
+                        </label>
+                    </div>
+                    
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="addWebsite" checked>
+                        <label class="form-check-label small" for="addWebsite">
+                            Website
+                        </label>
+                    </div>
+                    
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="addAddress" checked>
+                        <label class="form-check-label small" for="addAddress">
+                            Address
+                        </label>
+                    </div>
+                    
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="addLogo" checked>
+                        <label class="form-check-label small" for="addLogo">
+                            Company Logo
+                        </label>
+                    </div>
+                    
+                    <div class="tool-buttons mt-3">
+                        <button type="button" class="btn btn-outline-primary btn-sm mb-2 w-100" onclick="addSelectedCompanyInfo()">
+                            <i class="fas fa-plus me-1"></i>Add Selected
+                        </button>
+                        
+                        <button type="button" class="btn btn-outline-secondary btn-sm mb-2 w-100" onclick="clearCompanyInfo()">
+                            <i class="fas fa-trash me-1"></i>Clear All
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Background Color -->
+            <div class="panel-section">
+                <div class="section-title">
+                    <i class="fas fa-fill-drip"></i>
+                    Background Color
+                </div>
+                <div class="background-color-section">
+                    <div class="form-group mb-3">
+                        <label class="form-label small">Canvas Background:</label>
+                        <div class="d-flex align-items-center">
+                            <input type="color" id="backgroundColorPicker" class="form-control form-control-color me-2" value="#ffffff">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="setTransparentBackground()">
+                                <i class="fas fa-eye-slash"></i> Transparent
+                            </button>
+                        </div>
+                    </div>
+                    <div class="background-presets">
+                        <div class="preset-title small mb-2">Quick Presets:</div>
+                        <div class="preset-buttons">
+                            <button type="button" class="btn btn-sm btn-outline-light mb-1 me-1" onclick="setBackgroundColor('#ffffff')" style="background-color: #ffffff; color: #000;">White</button>
+                            <button type="button" class="btn btn-sm btn-outline-dark mb-1 me-1" onclick="setBackgroundColor('#000000')" style="background-color: #000000; color: #fff;">Black</button>
+                            <button type="button" class="btn btn-sm btn-outline-primary mb-1 me-1" onclick="setBackgroundColor('#f8f9fa')" style="background-color: #f8f9fa; color: #000;">Light Gray</button>
+                            <button type="button" class="btn btn-sm btn-outline-success mb-1 me-1" onclick="setBackgroundColor('#e9ecef')" style="background-color: #e9ecef; color: #000;">Gray</button>
+                            <button type="button" class="btn btn-sm btn-outline-info mb-1 me-1" onclick="setBackgroundColor('#f0f8ff')" style="background-color: #f0f8ff; color: #000;">Light Blue</button>
+                            <button type="button" class="btn btn-sm btn-outline-warning mb-1 me-1" onclick="setBackgroundColor('#fff8dc')" style="background-color: #fff8dc; color: #000;">Light Yellow</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Color Palette -->
+            <div class="panel-section">
+                <div class="section-title">
+                    <i class="fas fa-palette"></i>
+                    Text & Shape Colors
+                </div>
+                <div class="color-palette">
+                    <div class="color-btn" style="background: #000000;" onclick="setColor('#000000')"></div>
+                    <div class="color-btn" style="background: #ffffff;" onclick="setColor('#ffffff')"></div>
+                    <div class="color-btn" style="background: #4A90E2;" onclick="setColor('#4A90E2')"></div>
+                    <div class="color-btn" style="background: #50E3C2;" onclick="setColor('#50E3C2')"></div>
+                    <div class="color-btn" style="background: #e74c3c;" onclick="setColor('#e74c3c')"></div>
+                    <div class="color-btn" style="background: #f39c12;" onclick="setColor('#f39c12')"></div>
+                    <div class="color-btn" style="background: #27ae60;" onclick="setColor('#27ae60')"></div>
+                    <div class="color-btn" style="background: #9b59b6;" onclick="setColor('#9b59b6')"></div>
+                    <div class="color-btn" style="background: #34495e;" onclick="setColor('#34495e')"></div>
+                    <div class="color-btn" style="background: #95a5a6;" onclick="setColor('#95a5a6')"></div>
+                    <div class="color-btn" style="background: #e67e22;" onclick="setColor('#e67e22')"></div>
+                    <div class="color-btn" style="background: #1abc9c;" onclick="setColor('#1abc9c')"></div>
+                </div>
+            </div>
+
+            <!-- Font Controls -->
+            <div class="panel-section">
+                <div class="section-title">
+                    <i class="fas fa-cog"></i>
+                    Text Properties
+                </div>
+                <div class="font-controls">
+                    <div class="control-group">
+                        <label>Font:</label>
+                        <select id="fontFamily" onchange="updateTextProperty('fontFamily', this.value)">
+                            <option value="Arial">Arial</option>
+                            <option value="Helvetica">Helvetica</option>
+                            <option value="Times New Roman">Times New Roman</option>
+                            <option value="Georgia">Georgia</option>
+                            <option value="Verdana">Verdana</option>
+                            <option value="Courier New">Courier New</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Size:</label>
+                        <input type="number" id="fontSize" value="24" min="8" max="200" onchange="updateTextProperty('fontSize', this.value)">
+                    </div>
+                    <div class="control-group">
+                        <label>Color:</label>
+                        <input type="color" id="textColor" value="#000000" onchange="updateTextProperty('fill', this.value)">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Canvas Container -->
+        <div class="canvas-container">
+            <canvas id="canvas" width="1024" height="768"></canvas>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel">
+            <!-- Layers -->
+            <div class="layers-panel">
+                <div class="section-title">
+                    <i class="fas fa-layer-group"></i>
+                    Layers
+                </div>
+                <div id="layersList">
+                    <!-- Layers will be populated here -->
+                </div>
+            </div>
+
+            <!-- Properties -->
+            <div class="properties-panel">
+                <div class="section-title">
+                    <i class="fas fa-sliders-h"></i>
+                    Properties
+                </div>
+                <div id="propertiesContent">
+                    <!-- Properties will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications -->
+    <div id="notifications"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <script>
+        // Canvas and Fabric.js initialization
+        let canvas;
+        let currentColor = '#000000';
+        let undoStack = [];
+        let redoStack = [];
+        
+        // Initialize poster data
+        const posterData = {{ posterData|tojson|safe }};
+        
+        // Initialize canvas
+        document.addEventListener('DOMContentLoaded', function() {
+            canvas = new fabric.Canvas('canvas', {
+                backgroundColor: 'transparent',  // Default transparent background
+                selection: true,
+                preserveObjectStacking: true
+            });
+            
+
+
+            // Load poster image
+            const posterImage = new Image();
+            posterImage.crossOrigin = 'anonymous';
+            
+            posterImage.onload = function() {
+                fabric.Image.fromURL(posterImage.src, function(img) {
+                    // Calculate proper size to fit canvas while maintaining aspect ratio
+                    const canvasWidth = canvas.getWidth();
+                    const canvasHeight = canvas.getHeight();
+                    const imgWidth = img.width;
+                    const imgHeight = img.height;
+                    
+                    // Calculate scale to fit the poster within canvas bounds
+                    const scaleX = canvasWidth / imgWidth;
+                    const scaleY = canvasHeight / imgHeight;
+                    const scale = Math.min(scaleX, scaleY, 1); // Don't scale up, only down
+                    
+                    img.set({
+                        left: (canvasWidth - imgWidth * scale) / 2,
+                        top: (canvasHeight - imgHeight * scale) / 2,
+                        scaleX: scale,
+                        scaleY: scale,
+                        selectable: true,
+                        evented: true,
+                        hasControls: true,
+                        hasBorders: true,
+                        lockMovementX: false,
+                        lockMovementY: false,
+                        lockRotation: false,
+                        lockScalingX: false,
+                        lockScalingY: false
+                    });
+                    
+                    canvas.add(img);
+                    canvas.renderAll();
+                    
+                    // Enable object selection and movement
+                    canvas.selection = true;
+                    canvas.forEachObject(function(obj) {
+                        obj.selectable = true;
+                        obj.evented = true;
+                    });
+                    
+                    saveState();
+                    updateLayers();
+                    
+                                // Show helpful notification
+            showNotification('Poster loaded! Click and drag to move, use corner handles to resize.', 'success');
+            
+            // Initialize background color picker
+            const bgColorPicker = document.getElementById('backgroundColorPicker');
+            if (bgColorPicker) {
+                bgColorPicker.addEventListener('change', function() {
+                    setBackgroundColor(this.value);
+                });
+            }
+            
+            // Set initial transparent background
+            setTransparentBackground();
+        });
+    };
+            
+            posterImage.onerror = function() {
+                console.error('Failed to load poster image:', posterImage.src);
+                showNotification('Error loading poster image. Please try refreshing the page.', 'error');
+                
+                // Create a placeholder rectangle as a regular object
+                const placeholder = new fabric.Rect({
+                    left: 0,
+                    top: 0,
+                    width: canvas.getWidth(),
+                    height: canvas.getHeight(),
+                    fill: '#f0f0f0',
+                    selectable: true,
+                    evented: true,
+                    hasControls: true,
+                    hasBorders: true,
+                    lockMovementX: false,
+                    lockMovementY: false,
+                    lockRotation: false,
+                    lockScalingX: false,
+                    lockScalingY: false
+                });
+                canvas.add(placeholder);
+                canvas.renderAll();
+                saveState();
+                updateLayers();
+            };
+            
+            posterImage.src = '{{ url_for("static", filename="uploads/posters/" + poster.filename) }}';
+
+            // Event listeners
+            canvas.on('selection:created', updateLayers);
+            canvas.on('selection:updated', updateLayers);
+            canvas.on('selection:cleared', updateLayers);
+            canvas.on('object:added', saveState);
+            canvas.on('object:removed', saveState);
+            canvas.on('object:modified', saveState);
+            
+
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey || e.metaKey) {
+                    switch(e.key) {
+                        case 's':
+                            e.preventDefault();
+                            savePoster();
+                            break;
+                        case 'z':
+                            e.preventDefault();
+                            if (e.shiftKey) {
+                                redo();
+                            } else {
+                                undo();
+                            }
+                            break;
+                        case 'Delete':
+                        case 'Backspace':
+                            e.preventDefault();
+                            deleteSelected();
+                            break;
+                        case 'a':
+                            e.preventDefault();
+                            selectAll();
+                            break;
+                        case 'd':
+                            e.preventDefault();
+                            deselectAll();
+                            break;
+                    }
+                } else {
+                    // Single key shortcuts (without Ctrl/Cmd)
+                    switch(e.key) {
+                        case 'Delete':
+                        case 'Backspace':
+                            e.preventDefault();
+                            deleteSelected();
+                            break;
+                        case 'Escape':
+                            e.preventDefault();
+                            deselectAll();
+                            break;
+                    }
+                }
+            });
+        });
+
+        // Tool functions
+        function addText() {
+            const text = new fabric.IText('Double click to edit', {
+                left: 100,
+                top: 100,
+                fontFamily: 'Arial',
+                fontSize: 24,
+                fill: currentColor,
+                selectable: true,
+                evented: true,
+                hasControls: true,
+                hasBorders: true,
+                lockMovementX: false,
+                lockMovementY: false,
+                lockRotation: false,
+                lockScalingX: false,
+                lockScalingY: false
+            });
+            canvas.add(text);
+            canvas.setActiveObject(text);
+            text.enterEditing();
+            canvas.renderAll();
+            saveState();
+            updateLayers();
+            showNotification('Text added successfully!', 'success');
+        }
+
+        function addHeading() {
+            const text = new fabric.IText('HEADING', {
+                left: 100,
+                top: 100,
+                fontFamily: 'Arial',
+                fontSize: 48,
+                fontWeight: 'bold',
+                fill: currentColor,
+                selectable: true,
+                evented: true,
+                hasControls: true,
+                hasBorders: true,
+                lockMovementX: false,
+                lockMovementY: false,
+                lockRotation: false,
+                lockScalingX: false,
+                lockScalingY: false
+            });
+            canvas.add(text);
+            canvas.setActiveObject(text);
+            text.enterEditing();
+            canvas.renderAll();
+            saveState();
+            updateLayers();
+            showNotification('Heading added successfully!', 'success');
+        }
+
+        function addSubheading() {
+            const text = new fabric.IText('Subheading', {
+                left: 100,
+                top: 100,
+                fontFamily: 'Arial',
+                fontSize: 32,
+                fontWeight: 'bold',
+                fill: currentColor,
+                selectable: true,
+                evented: true,
+                hasControls: true,
+                hasBorders: true,
+                lockMovementX: false,
+                lockMovementY: false,
+                lockRotation: false,
+                lockScalingX: false,
+                lockScalingY: false
+            });
+            canvas.add(text);
+            canvas.setActiveObject(text);
+            text.enterEditing();
+            canvas.renderAll();
+            saveState();
+            updateLayers();
+            showNotification('Subheading added successfully!', 'success');
+        }
+
+        function addBodyText() {
+            const text = new fabric.IText('Body text here', {
+                left: 100,
+                top: 100,
+                fontFamily: 'Arial',
+                fontSize: 16,
+                fill: currentColor,
+                selectable: true,
+                evented: true,
+                hasControls: true,
+                hasBorders: true,
+                lockMovementX: false,
+                lockMovementY: false,
+                lockRotation: false,
+                lockScalingX: false,
+                lockScalingY: false
+            });
+            canvas.add(text);
+            canvas.setActiveObject(text);
+            text.enterEditing();
+            canvas.renderAll();
+            saveState();
+            updateLayers();
+            showNotification('Body text added successfully!', 'success');
+        }
+
+        function addImage() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        fabric.Image.fromURL(event.target.result, function(img) {
+                            img.set({
+                                left: 100,
+                                top: 100,
+                                selectable: true,
+                                evented: true,
+                                hasControls: true,
+                                hasBorders: true,
+                                lockMovementX: false,
+                                lockMovementY: false,
+                                lockRotation: false,
+                                lockScalingX: false,
+                                lockScalingY: false
+                            });
+                            canvas.add(img);
+                            canvas.setActiveObject(img);
+                            canvas.renderAll();
+                            saveState();
+                            updateLayers();
+                            showNotification('Image added successfully!', 'success');
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            input.click();
+        }
+
+        function addCompanyLogo() {
+            if (posterData.userProfile.logo_filename) {
+                const logoUrl = '/static/uploads/logos/' + posterData.userProfile.logo_filename;
+                fabric.Image.fromURL(logoUrl, function(img) {
+                    if (img) {
+                        img.set({
+                            left: canvas.getWidth() - 120,
+                            top: 20,
+                            scaleX: Math.min(100 / img.width, 100 / img.height),
+                            scaleY: Math.min(100 / img.width, 100 / img.height),
+                            cornerStyle: 'circle',
+                            borderColor: '#4A90E2',
+                            cornerColor: '#4A90E2',
+                            selectable: true,
+                            evented: true,
+                            hasControls: true,
+                            hasBorders: true,
+                            lockMovementX: false,
+                            lockMovementY: false,
+                            lockRotation: false,
+                            lockScalingX: false,
+                            lockScalingY: false
+                        });
+                                                    canvas.add(img);
+                            canvas.setActiveObject(img);
+                            canvas.renderAll();
+                            saveState();
+                            updateLayers();
+                            showNotification('Company logo added successfully!', 'success');
+                    } else {
+                        showNotification('Error loading logo image.', 'error');
+                    }
+                }, { crossOrigin: 'anonymous' });
+            } else {
+                showNotification('No logo uploaded. Please upload a logo in your profile settings.', 'error');
+            }
+        }
+
+        function addShape() {
+            const shapes = [
+                { type: 'rect', label: 'Rectangle' },
+                { type: 'circle', label: 'Circle' },
+                { type: 'triangle', label: 'Triangle' }
+            ];
+
+            const shape = shapes[Math.floor(Math.random() * shapes.length)];
+            let fabricShape;
+
+            switch(shape.type) {
+                case 'rect':
+                    fabricShape = new fabric.Rect({
+                        left: 100,
+                        top: 100,
+                        width: 100,
+                        height: 60,
+                        fill: currentColor,
+                        selectable: true,
+                        evented: true,
+                        hasControls: true,
+                        hasBorders: true,
+                        lockMovementX: false,
+                        lockMovementY: false,
+                        lockRotation: false,
+                        lockScalingX: false,
+                        lockScalingY: false
+                    });
+                    break;
+                case 'circle':
+                    fabricShape = new fabric.Circle({
+                        left: 100,
+                        top: 100,
+                        radius: 50,
+                        fill: currentColor,
+                        selectable: true,
+                        evented: true,
+                        hasControls: true,
+                        hasBorders: true,
+                        lockMovementX: false,
+                        lockMovementY: false,
+                        lockRotation: false,
+                        lockScalingX: false,
+                        lockScalingY: false
+                    });
+                    break;
+                case 'triangle':
+                    fabricShape = new fabric.Triangle({
+                        left: 100,
+                        top: 100,
+                        width: 100,
+                        height: 100,
+                        fill: currentColor,
+                        selectable: true,
+                        evented: true,
+                        hasControls: true,
+                        hasBorders: true,
+                        lockMovementX: false,
+                        lockMovementY: false,
+                        lockRotation: false,
+                        lockScalingX: false,
+                        lockScalingY: false
+                    });
+                    break;
+            }
+
+            canvas.add(fabricShape);
+            canvas.setActiveObject(fabricShape);
+            canvas.renderAll();
+            saveState();
+            updateLayers();
+            showNotification(shape.label + ' added successfully!', 'success');
+        }
+
+        function enhancedAutoFillWhiteSpace() {
+            const fields = [
+                { key: 'business_name', label: 'Business Name', priority: 1 },
+                { key: 'full_name', label: 'Full Name', priority: 2 },
+                { key: 'phone', label: 'Phone', priority: 3 },
+                { key: 'email', label: 'Email', priority: 4 },
+                { key: 'website', label: 'Website', priority: 5 },
+                { key: 'address', label: 'Address', priority: 6 }
+            ];
+
+            const availableFields = fields.filter(field => posterData.userProfile[field.key]);
+            const positions = [
+                { x: 50, y: 50 },
+                { x: 50, y: 100 },
+                { x: 50, y: 150 },
+                { x: 50, y: 200 },
+                { x: 50, y: 250 },
+                { x: 50, y: 300 }
+            ];
+
+            availableFields.forEach((field, index) => {
+                if (index < positions.length) {
+                    const text = new fabric.IText(field.label + ': ' + posterData.userProfile[field.key], {
+                        left: positions[index].x,
+                        top: positions[index].y,
+                        fontFamily: 'Arial',
+                        fontSize: 16,
+                        fill: '#333333',
+                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                        padding: 10,
+                        selectable: true,
+                        evented: true,
+                        hasControls: true,
+                        hasBorders: true
+                    });
+                    canvas.add(text);
+                }
+            });
+
+            canvas.renderAll();
+            saveState();
+            updateLayers();
+            showNotification(`Added ${availableFields.length} profile fields to fill white space!`, 'success');
+        }
+
+        // Color functions
+        function setColor(color) {
+            currentColor = color;
+            document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const activeObject = canvas.getActiveObject();
+            if (activeObject) {
+                activeObject.set('fill', color);
+                canvas.renderAll();
+                updateProperties();
+            }
+        }
+
+        // Background color functions
+        function setBackgroundColor(color) {
+            // Remove existing background rectangle if any
+            const existingBg = canvas.getObjects().find(obj => obj.isBackground);
+            if (existingBg) {
+                canvas.remove(existingBg);
+            }
+            
+            // Get poster dimensions (assuming poster is the first image object)
+            const poster = canvas.getObjects().find(obj => obj.type === 'image');
+            if (poster) {
+                const posterBounds = poster.getBoundingRect();
+                
+                // Create background rectangle that matches poster size exactly
+                const backgroundRect = new fabric.Rect({
+                    left: posterBounds.left,
+                    top: posterBounds.top,
+                    width: posterBounds.width,
+                    height: posterBounds.height,
+                    fill: color,
+                    selectable: false,
+                    evented: false,
+                    hasControls: false,
+                    hasBorders: false,
+                    isBackground: true
+                });
+                
+                // Add background behind the poster
+                canvas.insertAt(backgroundRect, 0);
+                canvas.renderAll();
+                showNotification(`Background color changed to ${color}`, 'success');
+                saveState();
+            } else {
+                // Fallback to canvas background if no poster found
+                canvas.setBackgroundColor(color, canvas.renderAll.bind(canvas));
+                showNotification(`Background color changed to ${color}`, 'success');
+                saveState();
+            }
+        }
+
+        function setTransparentBackground() {
+            // Remove existing background rectangle if any
+            const existingBg = canvas.getObjects().find(obj => obj.isBackground);
+            if (existingBg) {
+                canvas.remove(existingBg);
+                canvas.renderAll();
+            }
+            
+            // Reset canvas background to transparent
+            canvas.setBackgroundColor('transparent', canvas.renderAll.bind(canvas));
+            document.getElementById('backgroundColorPicker').value = '#ffffff'; // Reset picker
+            showNotification('Background set to transparent', 'success');
+            saveState();
+        }
+
+        // Text property functions
+        function updateTextProperty(property, value) {
+            const activeObject = canvas.getActiveObject();
+            if (activeObject && activeObject.type === 'i-text') {
+                activeObject.set(property, value);
+                canvas.renderAll();
+                updateProperties();
+            }
+        }
+
+        // Layer functions
+        function updateLayers() {
+            const layersList = document.getElementById('layersList');
+            layersList.innerHTML = '';
+
+            canvas.getObjects().forEach((obj, index) => {
+                const layerItem = document.createElement('div');
+                layerItem.className = 'layer-item';
+                layerItem.onclick = () => selectObject(obj);
+
+                const icon = document.createElement('i');
+                icon.className = obj.type === 'i-text' ? 'fas fa-font' : 
+                               obj.type === 'image' ? 'fas fa-image' : 'fas fa-shapes';
+
+                const span = document.createElement('span');
+                span.textContent = obj.type === 'i-text' ? (obj.text || 'Text') : 
+                                 obj.type === 'image' ? 'Image' : 'Shape';
+
+                const controls = document.createElement('div');
+                controls.className = 'layer-controls';
+
+                const upBtn = document.createElement('button');
+                upBtn.className = 'layer-btn';
+                upBtn.innerHTML = '↑';
+                upBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    bringForward(obj);
+                };
+
+                const downBtn = document.createElement('button');
+                downBtn.className = 'layer-btn';
+                downBtn.innerHTML = '↓';
+                downBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    sendBackward(obj);
+                };
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'layer-btn';
+                deleteBtn.innerHTML = '×';
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    deleteObject(obj);
+                };
+
+                controls.appendChild(upBtn);
+                controls.appendChild(downBtn);
+                controls.appendChild(deleteBtn);
+
+                layerItem.appendChild(icon);
+                layerItem.appendChild(span);
+                layerItem.appendChild(controls);
+                layersList.appendChild(layerItem);
+            });
+        }
+
+        function selectObject(obj) {
+            canvas.setActiveObject(obj);
+            canvas.renderAll();
+            updateProperties();
+        }
+
+        function bringForward(obj) {
+            canvas.bringForward(obj);
+            canvas.renderAll();
+            updateLayers();
+        }
+
+        function sendBackward(obj) {
+            canvas.sendBackward(obj);
+            canvas.renderAll();
+            updateLayers();
+        }
+
+        function deleteObject(obj) {
+            canvas.remove(obj);
+            canvas.renderAll();
+            saveState();
+            updateLayers();
+            updateProperties();
+            showNotification('Object deleted successfully!', 'success');
+        }
+
+        // Properties functions
+        function updateProperties() {
+            const propertiesContent = document.getElementById('propertiesContent');
+            const activeObject = canvas.getActiveObject();
+
+            if (!activeObject) {
+                propertiesContent.innerHTML = '<p style="color: var(--text-muted); font-size: 12px;">Select an object to view properties</p>';
+                return;
+            }
+
+            let html = '';
+
+            if (activeObject.type === 'i-text') {
+                html = `
+                    <div class="property-group">
+                        <label class="property-label">Text:</label>
+                        <input type="text" class="property-input" value="${activeObject.text || ''}" onchange="updateObjectProperty('text', this.value)">
+                    </div>
+                    <div class="property-group">
+                        <label class="property-label">Font Size:</label>
+                        <input type="number" class="property-input" value="${activeObject.fontSize || 24}" onchange="updateObjectProperty('fontSize', this.value)">
+                    </div>
+                    <div class="property-group">
+                        <label class="property-label">Font Family:</label>
+                        <select class="property-input" onchange="updateObjectProperty('fontFamily', this.value)">
+                            <option value="Arial" ${activeObject.fontFamily === 'Arial' ? 'selected' : ''}>Arial</option>
+                            <option value="Helvetica" ${activeObject.fontFamily === 'Helvetica' ? 'selected' : ''}>Helvetica</option>
+                            <option value="Times New Roman" ${activeObject.fontFamily === 'Times New Roman' ? 'selected' : ''}>Times New Roman</option>
+                            <option value="Georgia" ${activeObject.fontFamily === 'Georgia' ? 'selected' : ''}>Georgia</option>
+                        </select>
+                    </div>
+                    <div class="property-group">
+                        <label class="property-label">Color:</label>
+                        <input type="color" class="property-input" value="${activeObject.fill || '#000000'}" onchange="updateObjectProperty('fill', this.value)">
+                    </div>
+                `;
+            } else {
+                html = `
+                    <div class="property-group">
+                        <label class="property-label">Width:</label>
+                        <input type="number" class="property-input" value="${Math.round(activeObject.width * activeObject.scaleX)}" onchange="updateObjectProperty('width', this.value)">
+                    </div>
+                    <div class="property-group">
+                        <label class="property-label">Height:</label>
+                        <input type="number" class="property-input" value="${Math.round(activeObject.height * activeObject.scaleY)}" onchange="updateObjectProperty('height', this.value)">
+                    </div>
+                    <div class="property-group">
+                        <label class="property-label">X Position:</label>
+                        <input type="number" class="property-input" value="${Math.round(activeObject.left)}" onchange="updateObjectProperty('left', this.value)">
+                    </div>
+                    <div class="property-group">
+                        <label class="property-label">Y Position:</label>
+                        <input type="number" class="property-input" value="${Math.round(activeObject.top)}" onchange="updateObjectProperty('top', this.value)">
+                    </div>
+                `;
+            }
+
+            propertiesContent.innerHTML = html;
+        }
+
+        function updateObjectProperty(property, value) {
+            const activeObject = canvas.getActiveObject();
+            if (activeObject) {
+                if (property === 'width' || property === 'height') {
+                    const scale = property === 'width' ? value / activeObject.width : value / activeObject.height;
+                    activeObject.set(property === 'width' ? 'scaleX' : 'scaleY', scale);
+                } else {
+                    activeObject.set(property, value);
+                }
+                canvas.renderAll();
+                updateLayers();
+            }
+        }
+
+        // Undo/Redo functions
+        function saveState() {
+            undoStack.push(JSON.stringify(canvas.toJSON()));
+            redoStack = [];
+        }
+
+        function undo() {
+            if (undoStack.length > 1) {
+                redoStack.push(undoStack.pop());
+                canvas.loadFromJSON(JSON.parse(undoStack[undoStack.length - 1]), canvas.renderAll.bind(canvas));
+                updateLayers();
+                updateProperties();
+                showNotification('Undo successful!', 'success');
+            }
+        }
+
+        function redo() {
+            if (redoStack.length > 0) {
+                const state = redoStack.pop();
+                undoStack.push(state);
+                canvas.loadFromJSON(JSON.parse(state), canvas.renderAll.bind(canvas));
+                updateLayers();
+                updateProperties();
+                showNotification('Redo successful!', 'success');
+            }
+        }
+
+        // Selection functions
+        function selectAll() {
+            canvas.discardActiveObject();
+            const sel = new fabric.ActiveSelection(canvas.getObjects(), canvas);
+            canvas.setActiveObject(sel);
+            canvas.renderAll();
+            updateLayers();
+            updateProperties();
+        }
+
+        function deselectAll() {
+            canvas.discardActiveObject();
+            canvas.renderAll();
+            updateLayers();
+            updateProperties();
+        }
+
+        function deleteSelected() {
+            const activeObject = canvas.getActiveObject();
+            if (activeObject) {
+                if (activeObject.type === 'activeSelection') {
+                    const activeGroup = activeObject;
+                    activeGroup.forEachObject(function(obj) {
+                        canvas.remove(obj);
+                    });
+                } else {
+                    canvas.remove(activeObject);
+                }
+                canvas.renderAll();
+                saveState();
+                updateLayers();
+                updateProperties();
+                showNotification('Selected objects deleted!', 'success');
+            }
+        }
+
+        // Save and export functions
+        function savePoster() {
+            showLoading();
+            const canvasData = canvas.toDataURL('image/png');
+            
+            fetch('/poster/{{ poster.id }}/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    canvas_data: canvasData
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideLoading();
+                if (data.success) {
+                    showNotification('Poster saved successfully!', 'success');
+                } else {
+                    showNotification('Error saving poster: ' + data.error, 'error');
+                }
+            })
+            .catch(error => {
+                hideLoading();
+                showNotification('Error saving poster: ' + error, 'error');
+            });
+        }
+
+        function exportPDF() {
+            showLoading();
+            const canvasData = canvas.toDataURL('image/png');
+            
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+            const imgData = canvasData;
+            const imgWidth = 210;
+            const pageHeight = 295;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            let heightLeft = imgHeight;
+
+            let position = 0;
+
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft >= 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+            pdf.save('poster.pdf');
+            hideLoading();
+            showNotification('PDF exported successfully!', 'success');
+        }
+
+        function exportImage() {
+            const link = document.createElement('a');
+            link.download = 'poster.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showNotification('Image exported successfully!', 'success');
+        }
+
+        function deletePoster() {
+            if (confirm('Are you sure you want to delete this poster? This action cannot be undone.')) {
+                window.location.href = '/poster/{{ poster.id }}/delete';
+            }
+        }
+
+        // Utility functions
+        function showNotification(message, type) {
+            const notifications = document.getElementById('notifications');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            notifications.appendChild(notification);
+
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notifications.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        function showLoading() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        // Company Details Functions
+        function addSelectedCompanyInfo() {
+            const selectedFields = [];
+            
+            // Check which fields are selected
+            if (document.getElementById('addCompanyName').checked) {
+                selectedFields.push({ key: 'business_name', label: 'Business Name' });
+                selectedFields.push({ key: 'full_name', label: 'Full Name' });
+            }
+            if (document.getElementById('addPhone').checked) {
+                selectedFields.push({ key: 'phone', label: 'Phone' });
+            }
+            if (document.getElementById('addEmail').checked) {
+                selectedFields.push({ key: 'email', label: 'Email' });
+            }
+            if (document.getElementById('addWebsite').checked) {
+                selectedFields.push({ key: 'website', label: 'Website' });
+            }
+            if (document.getElementById('addAddress').checked) {
+                selectedFields.push({ key: 'address', label: 'Address' });
+            }
+
+            // Add logo if selected
+            if (document.getElementById('addLogo').checked && posterData.userProfile.logo_filename) {
+                addCompanyLogo();
+            }
+
+            // Get poster dimensions for positioning inside the poster
+            const poster = canvas.getObjects().find(obj => obj.type === 'image');
+            if (!poster) {
+                showNotification('No poster found. Please load a poster first.', 'warning');
+                return;
+            }
+            
+            const posterBounds = poster.getBoundingRect();
+            const posterLeft = posterBounds.left;
+            const posterTop = posterBounds.top;
+            const posterWidth = posterBounds.width;
+            const posterHeight = posterBounds.height;
+            
+            // Calculate positions inside the poster (with margins)
+            const margin = 20;
+            const startX = posterLeft + margin;
+            const startY = posterTop + margin;
+            const maxWidth = posterWidth - (margin * 2);
+            
+            const positions = [
+                { x: startX, y: startY },
+                { x: startX, y: startY + 40 },
+                { x: startX, y: startY + 80 },
+                { x: startX, y: startY + 120 },
+                { x: startX, y: startY + 160 },
+                { x: startX, y: startY + 200 }
+            ];
+
+            let addedCount = 0;
+            selectedFields.forEach((field, index) => {
+                if (posterData.userProfile[field.key] && index < positions.length) {
+                    const textContent = field.label + ': ' + posterData.userProfile[field.key];
+                    
+                    // Create text with proper sizing for poster
+                    const text = new fabric.IText(textContent, {
+                        left: positions[index].x,
+                        top: positions[index].y,
+                        fontFamily: 'Arial',
+                        fontSize: Math.min(16, maxWidth / 20), // Responsive font size
+                        fill: '#333333',
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        padding: 8,
+                        selectable: true,
+                        evented: true,
+                        hasControls: true,
+                        hasBorders: true,
+                        lockMovementX: false,
+                        lockMovementY: false,
+                        lockRotation: false,
+                        lockScalingX: false,
+                        lockScalingY: false
+                    });
+                    
+                    // Ensure text doesn't exceed poster width
+                    if (text.width > maxWidth) {
+                        text.set({
+                            fontSize: Math.min(text.fontSize, maxWidth / textContent.length)
+                        });
+                    }
+                    
+                    canvas.add(text);
+                    addedCount++;
+                }
+            });
+
+            canvas.renderAll();
+            saveState();
+            updateLayers();
+            showNotification(`Added ${addedCount} selected company details!`, 'success');
+        }
+
+        function clearCompanyInfo() {
+            // Remove all text objects that contain company information
+            const objectsToRemove = [];
+            canvas.getObjects().forEach(obj => {
+                if (obj.type === 'i-text' && obj.text) {
+                    const companyKeywords = ['Business Name', 'Full Name', 'Phone', 'Email', 'Website', 'Address'];
+                    if (companyKeywords.some(keyword => obj.text.includes(keyword))) {
+                        objectsToRemove.push(obj);
+                    }
+                }
+            });
+
+            objectsToRemove.forEach(obj => {
+                canvas.remove(obj);
+            });
+
+            canvas.renderAll();
+            saveState();
+            updateLayers();
+            showNotification('All company information cleared!', 'success');
+        }
+
+        // Enhanced company logo function
+        function addCompanyLogo() {
+            if (!posterData.userProfile.logo_filename) {
+                showNotification('No company logo uploaded. Please upload a logo in your profile first.', 'warning');
+                return;
+            }
+
+            // Get poster dimensions for positioning inside the poster
+            const poster = canvas.getObjects().find(obj => obj.type === 'image');
+            if (!poster) {
+                showNotification('No poster found. Please load a poster first.', 'warning');
+                return;
+            }
+
+            const posterBounds = poster.getBoundingRect();
+            const logoUrl = '/static/uploads/logos/' + posterData.userProfile.logo_filename;
+            
+            fabric.Image.fromURL(logoUrl, function(img) {
+                // Calculate logo position inside poster (top-right corner with margin)
+                const margin = 20;
+                const maxLogoSize = 80;
+                const logoSize = Math.min(maxLogoSize, posterBounds.width / 6, posterBounds.height / 6);
+                
+                const scaleX = logoSize / img.width;
+                const scaleY = logoSize / img.height;
+                
+                img.set({
+                    left: posterBounds.left + posterBounds.width - logoSize - margin,
+                    top: posterBounds.top + margin,
+                    scaleX: scaleX,
+                    scaleY: scaleY,
+                    cornerStyle: 'circle',
+                    borderColor: '#4A90E2',
+                    cornerColor: '#4A90E2',
+                    selectable: true,
+                    evented: true,
+                    hasControls: true,
+                    hasBorders: true,
+                    lockMovementX: false,
+                    lockMovementY: false,
+                    lockRotation: false,
+                    lockScalingX: false,
+                    lockScalingY: false
+                });
+                canvas.add(img);
+                canvas.setActiveObject(img);
+                canvas.renderAll();
+                saveState();
+                updateLayers();
+                showNotification('Company logo added successfully!', 'success');
+            }, { crossOrigin: 'anonymous' });
+        }
+    </script>
+</body>
+</html> 

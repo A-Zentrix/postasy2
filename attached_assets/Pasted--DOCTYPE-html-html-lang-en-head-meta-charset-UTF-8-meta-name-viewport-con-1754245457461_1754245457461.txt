@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posterly Editor</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Using a popular icon library like Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="editor-container">
+        <!-- ========================== -->
+        <!-- LEFT PANEL: TOOLS & ASSETS -->
+        <!-- ========================== -->
+        <aside class="left-panel">
+            <div class="logo-header">
+                <img src="path/to/your/logo.png" alt="Posterly Logo">
+                <h2>Posterly</h2>
+            </div>
+
+            <div class="main-tools">
+                <!-- Basic Tools -->
+                <button class="tool-btn"><i class="fas fa-mouse-pointer"></i><span>Select</span></button>
+                <button class="tool-btn"><i class="fas fa-font"></i><span>Add Text</span></button>
+                <button class="tool-btn"><i class="fas fa-image"></i><span>Add Image</span></button>
+                <button class="tool-btn"><i class="fas fa-shapes"></i><span>Add Shape</span></button>
+                <hr>
+                <button class="tool-btn"><i class="fas fa-undo"></i><span>Undo</span></button>
+                <button class="tool-btn"><i class="fas fa-trash"></i><span>Delete</span></button>
+            </div>
+
+            <!-- Collapsible Panels -->
+            <div class="panel-group">
+                <div class="panel">
+                    <button class="panel-header">
+                        <i class="fas fa-layer-group"></i> Layers
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </button>
+                    <div class="panel-content">
+                        <!-- Layer items would be dynamically added here -->
+                        <p>Your layers will appear here.</p>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <button class="panel-header">
+                        <i class="fas fa-sliders-h"></i> Properties
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </button>
+                    <div class="panel-content">
+                        <p>Select an object to edit its properties.</p>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <button class="panel-header">
+                        <i class="fas fa-file-export"></i> Export
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </button>
+                    <div class="panel-content">
+                        <button class="export-btn">Export as PNG</button>
+                        <button class="export-btn">Export as JPG</button>
+                        <button class="export-btn">Export as PDF</button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ======================= -->
+        <!-- RIGHT PANEL: MAIN AREA -->
+        <!-- ======================= -->
+        <main class="main-area">
+            <header class="main-header">
+                <input type="text" value="My Awesome Poster" class="poster-title">
+                <div class="header-actions">
+                    <button class="btn btn-secondary">Back to Gallery</button>
+                    <button class="btn btn-primary">Save Changes</button>
+                </div>
+            </header>
+
+            <div class="canvas-container">
+                <!-- Poster Loading Overlay -->
+                <div class="loading-overlay" id="loadingOverlay">
+                    <div class="spinner"></div>
+                    <p>Loading your poster...</p>
+                </div>
+
+                <!-- The Actual Poster Canvas -->
+                <div id="posterCanvas">
+                    <!-- Your poster content goes here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

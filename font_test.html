@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Font System Test - Postasy</title>
+    
+    <!-- Google Fonts - Single Standard Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    
+    <style>
+        .test-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            font-family: var(--font-family-primary, 'Inter', sans-serif);
+        }
+        
+        .font-weight-demo {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        
+        .font-weight-demo h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .text-light { font-weight: var(--font-weight-light); }
+        .text-regular { font-weight: var(--font-weight-regular); }
+        .text-medium { font-weight: var(--font-weight-medium); }
+        .text-semibold { font-weight: var(--font-weight-semibold); }
+        .text-bold { font-weight: var(--font-weight-bold); }
+        .text-extrabold { font-weight: var(--font-weight-extrabold); }
+        .text-black { font-weight: var(--font-weight-black); }
+        
+        .element-test {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Postasy Font System Test</h1>
+        <p>This page tests the implementation of the standard font system across the entire application.</p>
+        
+        <div class="font-weight-demo">
+            <h3>Font Weight Variations (Inter)</h3>
+            <p class="text-light">Light (300): The quick brown fox jumps over the lazy dog</p>
+            <p class="text-regular">Regular (400): The quick brown fox jumps over the lazy dog</p>
+            <p class="text-medium">Medium (500): The quick brown fox jumps over the lazy dog</p>
+            <p class="text-semibold">Semibold (600): The quick brown fox jumps over the lazy dog</p>
+            <p class="text-bold">Bold (700): The quick brown fox jumps over the lazy dog</p>
+            <p class="text-extrabold">Extrabold (800): The quick brown fox jumps over the lazy dog</p>
+            <p class="text-black">Black (900): The quick brown fox jumps over the lazy dog</p>
+        </div>
+        
+        <div class="font-weight-demo">
+            <h3>HTML Elements Test</h3>
+            <div class="element-test">
+                <h1>Heading 1</h1>
+                <h2>Heading 2</h2>
+                <h3>Heading 3</h3>
+                <h4>Heading 4</h4>
+                <h5>Heading 5</h5>
+                <h6>Heading 6</h6>
+            </div>
+            
+            <div class="element-test">
+                <p>This is a paragraph with regular text.</p>
+                <strong>This is strong text.</strong>
+                <em>This is emphasized text.</em>
+                <a href="#">This is a link</a>
+            </div>
+            
+            <div class="element-test">
+                <button class="btn btn-primary">Button Element</button>
+                <input type="text" placeholder="Input field" class="form-control" style="margin-top: 10px;">
+                <select class="form-select" style="margin-top: 10px;">
+                    <option>Select option</option>
+                </select>
+            </div>
+            
+            <div class="element-test">
+                <ul>
+                    <li>List item 1</li>
+                    <li>List item 2</li>
+                    <li>List item 3</li>
+                </ul>
+            </div>
+            
+            <div class="element-test">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Table Header</th>
+                            <th>Table Header</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Table Cell</td>
+                            <td>Table Cell</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="font-weight-demo">
+            <h3>CSS Variables Test</h3>
+            <p><strong>Font Family Primary:</strong> <span id="font-family-display"></span></p>
+            <p><strong>Current Font:</strong> <span id="current-font-display"></span></p>
+        </div>
+    </div>
+    
+    <script>
+        // Display the CSS variables
+        document.getElementById('font-family-display').textContent = getComputedStyle(document.documentElement).getPropertyValue('--font-family-primary');
+        document.getElementById('current-font-display').textContent = getComputedStyle(document.body).fontFamily;
+        
+        console.log('Font System Test Loaded');
+        console.log('CSS Variables:', {
+            '--font-family-primary': getComputedStyle(document.documentElement).getPropertyValue('--font-family-primary'),
+            '--font-weight-light': getComputedStyle(document.documentElement).getPropertyValue('--font-weight-light'),
+            '--font-weight-regular': getComputedStyle(document.documentElement).getPropertyValue('--font-weight-regular'),
+            '--font-weight-medium': getComputedStyle(document.documentElement).getPropertyValue('--font-weight-medium'),
+            '--font-weight-semibold': getComputedStyle(document.documentElement).getPropertyValue('--font-weight-semibold'),
+            '--font-weight-bold': getComputedStyle(document.documentElement).getPropertyValue('--font-weight-bold'),
+            '--font-weight-extrabold': getComputedStyle(document.documentElement).getPropertyValue('--font-weight-extrabold'),
+            '--font-weight-black': getComputedStyle(document.documentElement).getPropertyValue('--font-weight-black')
+        });
+    </script>
+</body>
+</html>

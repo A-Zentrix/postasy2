@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Access Forbidden - Postasy{% endblock %}
+
+{% block content %}
+<div class="container text-center py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="mb-4">
+                <i class="fas fa-lock fa-5x text-danger"></i>
+            </div>
+            <h1 class="display-4 fw-bold mb-3">Access Forbidden</h1>
+            <p class="lead text-muted mb-4">
+                You don't have permission to access this resource. This might be a premium feature or admin-only area.
+            </p>
+            
+            <div class="d-flex flex-wrap gap-3 justify-content-center">
+                <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary">
+                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                </a>
+                {% if not current_user.has_premium_access() %}
+                <a href="{{ url_for('payment.plans') }}" class="btn btn-warning">
+                    <i class="fas fa-crown me-2"></i>Upgrade to Premium
+                </a>
+                {% endif %}
+            </div>
+            
+            <div class="mt-5">
+                <div class="alert alert-info">
+                    <h6 class="mb-2">Need premium access?</h6>
+                    <p class="mb-0">
+                        Upgrade to Premium for unlimited poster generation, no watermarks, and advanced features.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

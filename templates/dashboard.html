@@ -1,0 +1,361 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Postasy{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Welcome Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8">
+            <h1 class="luxury-heading text-premium-gold mb-3">
+                Welcome back, {{ current_user.full_name or current_user.username }}!
+                {% if is_admin %}
+                    <span class="badge-premium ms-2">MASTER ADMIN</span>
+                {% elif current_user.has_premium_access() %}
+                    <span class="badge-premium ms-2">Premium</span>
+                {% endif %}
+            </h1>
+            <p class="text-premium-gold-light fs-5">Ready to create amazing posters with AI?</p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+            <a href="{{ url_for('poster.generate') }}" class="btn-premium btn-premium-primary btn-lg">
+                <i class="fas fa-plus-circle me-2"></i>Create New Poster
+            </a>
+        </div>
+    </div>
+
+    <!-- User Classification & Daily Usage -->
+    {% if not current_user.has_premium_access() %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card-premium p-4">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-3 mb-md-0">
+                            <div class="icon-wrapper me-3">
+                                <i class="fas fa-user-tag fa-2x text-premium-gold"></i>
+                            </div>
+                            <div>
+                                <h5 class="luxury-heading text-premium-gold mb-1">
+                                    {{ current_user.user_type.title() }} Account
+                                </h5>
+                                <p class="text-premium-gold-light mb-0">
+                                    {% if current_user.user_type == 'organization' %}
+                                        Business/Corporate email detected
+                                    {% else %}
+                                        Personal email account
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center justify-content-md-end">
+                            <div class="text-center me-4">
+                                <h4 class="luxury-heading text-premium-gold mb-1">{{ current_user.get_daily_poster_count() }}/{{ current_user.get_daily_poster_limit() }}</h4>
+                                <p class="text-premium-gold-light mb-0">Today's Usage</p>
+                            </div>
+                            <div class="text-center">
+                                <h4 class="luxury-heading text-premium-gold mb-1">{{ current_user.get_remaining_daily_posts() }}</h4>
+                                <p class="text-premium-gold-light mb-0">Remaining</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% if current_user.get_remaining_daily_posts() == 0 %}
+                <div class="mt-3 p-3 bg-premium-warning rounded">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                        <span class="text-premium-gold">You've reached your daily limit. Upgrade to Premium for unlimited access!</span>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Quick Stats -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="card-premium text-center p-4">
+                <div class="icon-wrapper mb-3">
+                    <i class="fas fa-images fa-3x text-premium-gold"></i>
+                </div>
+                <h3 class="luxury-heading text-premium-gold mb-2">{{ total_posters or current_user.posters|length }}</h3>
+                <p class="text-premium-gold-light mb-0">
+                    {% if is_admin %}Your Posters{% else %}Total Posters{% endif %}
+                </p>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card-premium text-center p-4">
+                <div class="icon-wrapper mb-3">
+                    {% if is_admin %}
+                        <i class="fas fa-users fa-3x text-premium-gold"></i>
+                    {% else %}
+                        <i class="fas fa-eye fa-3x text-premium-gold"></i>
+                    {% endif %}
+                </div>
+                <h3 class="luxury-heading text-premium-gold mb-2">
+                    {% if is_admin %}
+                        {{ admin_stats.total_users if admin_stats else 0 }}
+                    {% else %}
+                        {{ current_user.posters|selectattr('is_public')|list|length }}
+                    {% endif %}
+                </h3>
+                <p class="text-premium-gold-light mb-0">
+                    {% if is_admin %}Total Users{% else %}Public Posters{% endif %}
+                </p>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card-premium text-center p-4">
+                <div class="icon-wrapper mb-3">
+                    {% if is_admin %}
+                        <i class="fas fa-images fa-3x text-premium-gold"></i>
+                    {% elif current_user.has_premium_access() %}
+                        <i class="fas fa-crown fa-3x text-premium-gold"></i>
+                    {% else %}
+                        <i class="fas fa-user fa-3x text-premium-gold"></i>
+                    {% endif %}
+                </div>
+                <h3 class="luxury-heading text-premium-gold mb-2">
+                    {% if is_admin %}
+                        {{ admin_stats.total_all_posters if admin_stats else 0 }}
+                    {% elif current_user.has_premium_access() %}
+                        Premium
+                    {% else %}
+                        Free
+                    {% endif %}
+                </h3>
+                <p class="text-premium-gold-light mb-0">
+                    {% if is_admin %}All Posters{% elif current_user.has_premium_access() %}Active Plan{% else %}Current Plan{% endif %}
+                </p>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card-premium text-center p-4">
+                <div class="icon-wrapper mb-3">
+                    {% if is_admin %}
+                        <i class="fas fa-crown fa-3x text-premium-gold"></i>
+                    {% else %}
+                        <i class="fas fa-calendar fa-3x text-premium-gold"></i>
+                    {% endif %}
+                </div>
+                <h3 class="luxury-heading text-premium-gold mb-2">
+                    {% if is_admin %}
+                        {{ admin_stats.premium_users if admin_stats else 0 }}
+                    {% else %}
+                        {{ current_user.created_at.strftime('%b %Y') }}
+                    {% endif %}
+                </h3>
+                <p class="text-premium-gold-light mb-0">
+                    {% if is_admin %}Premium Users{% else %}Member Since{% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Posters -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="luxury-heading text-premium-gold">Recent Posters</h2>
+                <a href="{{ url_for('poster.gallery') }}" class="btn-premium btn-premium-outline">
+                    <i class="fas fa-images me-2"></i>View All
+                </a>
+            </div>
+            
+            {% if recent_posters and recent_posters|length > 0 %}
+                <div class="row g-4">
+                    {% for poster in recent_posters %}
+                        <div class="col-lg-4 col-md-6">
+                            <div class="card-premium h-100 poster-card">
+                                {% if poster.filename %}
+                                    <img src="/static/uploads/posters/{{ poster.filename }}" 
+                                         class="card-img-top" alt="{{ poster.title }}" 
+                                         style="height: 200px; object-fit: cover;">
+                                {% else %}
+                                    <div class="card-img-top bg-premium-gray d-flex align-items-center justify-content-center" 
+                                         style="height: 200px;">
+                                        <div class="icon-wrapper">
+                                            <i class="fas fa-image fa-3x text-premium-gold-light"></i>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                
+                                <div class="card-body">
+                                    <h5 class="card-title text-premium-gold">{{ poster.title }}</h5>
+                                    <p class="card-text text-premium-gold-light">{{ poster.prompt[:100] }}{% if poster.prompt|length > 100 %}...{% endif %}</p>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-premium-gold-light">{{ poster.created_at.strftime('%b %d, %Y') }}</small>
+                                        <div class="btn-group">
+                                            <a href="{{ url_for('poster.view', poster_id=poster.id) }}" 
+                                               class="btn-premium btn-premium-outline btn-sm">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ url_for('poster.edit', poster_id=poster.id) }}" 
+                                               class="btn-premium btn-premium-outline btn-sm">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state-container text-center py-5">
+                    <div class="empty-state-icon mb-4">
+                        <div class="icon-circle">
+                            <i class="fas fa-palette fa-4x text-premium-gold-light"></i>
+                        </div>
+                    </div>
+                    <h4 class="text-premium-gold mb-3">No posters yet</h4>
+                    <p class="text-premium-gold-light mb-4">Create your first poster to get started!</p>
+                    <a href="{{ url_for('poster.generate') }}" class="btn-premium btn-premium-primary btn-lg">
+                        <i class="fas fa-plus-circle me-2"></i>Create Your First Poster
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card-premium p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="icon-wrapper me-3">
+                        <i class="fas fa-magic fa-2x text-premium-gold"></i>
+                    </div>
+                    <h4 class="luxury-heading text-premium-gold mb-0">AI Generation</h4>
+                </div>
+                <p class="text-premium-gold-light mb-4">Create stunning posters with our advanced AI technology. Just describe what you want and watch the magic happen.</p>
+                <a href="{{ url_for('poster.generate') }}" class="btn-premium btn-premium-primary">
+                    <i class="fas fa-magic me-2"></i>Generate Poster
+                </a>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card-premium p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="icon-wrapper me-3">
+                        <i class="fas fa-palette fa-2x text-premium-gold"></i>
+                    </div>
+                    <h4 class="luxury-heading text-premium-gold mb-0">Gallery</h4>
+                </div>
+                <p class="text-premium-gold-light mb-4">Browse your collection of created posters. Edit, download, or share your designs with the world.</p>
+                <a href="{{ url_for('poster.gallery') }}" class="btn-premium btn-premium-outline">
+                    <i class="fas fa-images me-2"></i>View Gallery
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(58, 107, 175, 0.1) 0%, rgba(24, 66, 128, 0.1) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    border: 2px solid rgba(58, 107, 175, 0.2);
+}
+
+.empty-state-container {
+    background: linear-gradient(135deg, rgba(58, 107, 175, 0.05) 0%, rgba(24, 66, 128, 0.05) 100%);
+    border-radius: 16px;
+    border: 1px solid rgba(58, 107, 175, 0.1);
+    padding: 3rem;
+}
+
+.poster-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.poster-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(24, 66, 128, 0.15);
+}
+
+.card-premium {
+    border: 1px solid rgba(58, 107, 175, 0.1);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.card-premium:hover {
+    border-color: rgba(58, 107, 175, 0.2);
+    box-shadow: 0 10px 30px rgba(24, 66, 128, 0.1);
+}
+
+.btn-premium {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-premium:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(58, 107, 175, 0.25);
+}
+
+.badge-premium {
+    background: linear-gradient(135deg, #184280 0%, #3a6baf 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Add hover effects to poster cards
+document.querySelectorAll('.poster-card').forEach(card => {
+    card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-8px)';
+        this.style.transition = 'transform 0.3s ease';
+    });
+    
+    card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0)';
+    });
+});
+
+// Ensure Font Awesome icons are loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if Font Awesome is loaded
+    if (typeof FontAwesome === 'undefined') {
+        console.warn('Font Awesome not loaded, attempting to load...');
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+        document.head.appendChild(link);
+    }
+});
+</script>
+{% endblock %}

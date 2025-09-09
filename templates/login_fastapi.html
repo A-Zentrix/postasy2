@@ -1,0 +1,48 @@
+{% extends "base_fastapi.html" %}
+
+{% block title %}Login - Postasy{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <h3 class="card-title">
+                        <i class="fas fa-sign-in-alt me-2"></i>Welcome Back
+                    </h3>
+                    <p class="text-muted">Sign in to your Postasy account</p>
+                </div>
+
+                {% if error %}
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle me-2"></i>{{ error }}
+                    </div>
+                {% endif %}
+
+                <form method="POST" action="/login">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-3">
+                    <p class="mb-0">Don't have an account? <a href="{{ url_for('auth.register') }}">Sign up here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

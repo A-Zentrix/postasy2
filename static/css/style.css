@@ -1,0 +1,634 @@
+/* Postasy Theme Variables */
+:root {
+  --primary-gold: #3a6baf; /* primary */
+  --primary-gold-light: #b7cbe7; /* soft tint */
+  --primary-gold-dark: #184280; /* deep */
+  --luxury-purple: #184280; /* secondary/depth */
+  --luxury-purple-light: #3a6baf;
+  --luxury-purple-dark: #10224a;
+  --premium-black: #0A0A0A;
+  --premium-gray: #1A1A1A;
+  --premium-gray-light: #2A2A2A;
+  --premium-white: #F8F8F8;
+  --accent-emerald: #56D1C1;
+  --accent-sapphire: #3a6baf;
+  --accent-ruby: #F8646A;
+  --gradient-luxury: linear-gradient(135deg, #184280 0%, #3a6baf 50%, #184280 100%);
+  --gradient-premium: linear-gradient(135deg, #10224a 0%, #184280 50%, #10224a 100%);
+  --gradient-dark: linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 50%, #0A0A0A 100%);
+  --gradient-gold: linear-gradient(135deg, #184280 0%, #3a6baf 50%, #184280 100%);
+  --gradient-purple: linear-gradient(135deg, #10224a 0%, #184280 50%, #10224a 100%);
+  --shadow-soft: 0 10px 30px rgba(24, 66, 128, 0.10);
+  --shadow-medium: 0 20px 40px rgba(24, 66, 128, 0.15);
+  --shadow-strong: 0 30px 60px rgba(24, 66, 128, 0.20);
+  --shadow-gold: 0 8px 25px rgba(24, 66, 128, 0.30);
+  
+  /* Font System Variables */
+  --font-family-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --font-weight-black: 900;
+}
+
+/* Global Font System - One Standard Font for Entire App */
+* {
+  font-family: var(--font-family-primary) !important;
+}
+
+/* Global brand logo size */
+.brand-logo { height: 50px; width: auto; object-fit: contain; }
+@media (max-width: 576px) { .brand-logo { height: 32px; } }
+
+/* Ensure all text elements use the standard font */
+body,
+html,
+input,
+textarea,
+select,
+button,
+label,
+span,
+div,
+p,
+h1, h2, h3, h4, h5, h6,
+a,
+li,
+td,
+th,
+caption,
+legend,
+fieldset,
+optgroup,
+option {
+  font-family: var(--font-family-primary) !important;
+}
+
+/* Font weight utilities for consistent typography */
+.text-light { font-weight: var(--font-weight-light) !important; }
+.text-regular { font-weight: var(--font-weight-regular) !important; }
+.text-medium { font-weight: var(--font-weight-medium) !important; }
+.text-semibold { font-weight: var(--font-weight-semibold) !important; }
+.text-bold { font-weight: var(--font-weight-bold) !important; }
+.text-extrabold { font-weight: var(--font-weight-extrabold) !important; }
+.text-black { font-weight: var(--font-weight-black) !important; }
+
+/* Override any Bootstrap or other framework font declarations */
+.navbar-brand,
+.navbar-nav .nav-link,
+.btn,
+.form-control,
+.form-select,
+.form-label,
+.alert,
+.card-title,
+.card-text,
+.modal-title,
+.modal-body,
+.dropdown-menu,
+.dropdown-item,
+.table,
+.table th,
+.table td,
+.pagination .page-link,
+.breadcrumb,
+.breadcrumb-item,
+.badge,
+.tooltip,
+.popover,
+.list-group,
+.list-group-item {
+  font-family: var(--font-family-primary) !important;
+}
+
+/* Ensure canvas and editor elements use the standard font */
+#poster-canvas,
+.canvas-container,
+.editor-container,
+.text-editor,
+[contenteditable="true"] {
+  font-family: var(--font-family-primary) !important;
+}
+
+/* Override any specific font declarations that might exist */
+.luxury-heading,
+.navbar-brand-premium,
+.brand-text,
+.heading-font,
+.title-font {
+  font-family: var(--font-family-primary) !important;
+}
+
+/* Font Awesome Icon Fixes - Ensure icons are properly displayed */
+.fas, .far, .fab, .fal, .fad {
+  font-family: "Font Awesome 6 Free", "Font Awesome 6 Pro", "Font Awesome 6 Brands" !important;
+  font-style: normal !important;
+  font-variant: normal !important;
+  text-rendering: auto !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
+.fas {
+  font-weight: 900 !important;
+}
+
+.far {
+  font-weight: 400 !important;
+}
+
+.fab {
+  font-weight: 400 !important;
+}
+
+/* Ensure icon containers are properly sized */
+.icon-wrapper {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 1em !important;
+  min-height: 1em !important;
+}
+
+/* Fix for icon sizing */
+.fa-1x { font-size: 1em !important; }
+.fa-2x { font-size: 2em !important; }
+.fa-3x { font-size: 3em !important; }
+.fa-4x { font-size: 4em !important; }
+.fa-5x { font-size: 5em !important; }
+
+/* Dashboard specific icon fixes */
+.card-premium .fas,
+.card-premium .far,
+.card-premium .fab {
+  display: inline-block !important;
+  width: auto !important;
+  height: auto !important;
+  line-height: 1 !important;
+}
+
+/* Empty state icon styling */
+.empty-state-icon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.icon-circle {
+  width: 120px !important;
+  height: 120px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, rgba(58, 107, 175, 0.1) 0%, rgba(24, 66, 128, 0.1) 100%) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 auto !important;
+  border: 2px solid rgba(58, 107, 175, 0.2) !important;
+}
+
+.empty-state-container {
+  background: linear-gradient(135deg, rgba(58, 107, 175, 0.05) 0%, rgba(24, 66, 128, 0.05) 100%) !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(58, 107, 175, 0.1) !important;
+  padding: 3rem !important;
+}
+
+/* Premium Postasy Theme Variables */
+:root {
+  --premium-gold: #3a6baf;
+  --premium-gold-light: #b7cbe7;
+  --premium-gold-dark: #184280;
+  --premium-warning: rgba(255, 193, 7, 0.1);
+}
+
+/* Premium Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--premium-gray);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-gold);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-gold-dark);
+}
+
+/* Premium Loading Animation */
+.loading-premium {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(212, 175, 55, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--primary-gold);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Premium Card Hover Effects */
+.card-premium {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.card-premium:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-strong);
+}
+
+/* Premium Button Animations */
+.btn-premium {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn-premium:hover {
+    transform: translateY(-2px);
+}
+
+.btn-premium:active {
+    transform: translateY(0);
+}
+
+/* Premium Form Focus Effects */
+.form-control-premium {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--premium-white);
+    background-color: rgba(255, 255, 255, 0.9);
+    background-clip: padding-box;
+    border: 2px solid rgba(58, 107, 175, 0.2);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-control-premium:focus {
+    transform: scale(1.02);
+    border-color: var(--primary-gold);
+    box-shadow: 0 0 0 0.2rem rgba(58, 107, 175, 0.25);
+    outline: none;
+}
+
+.form-control-premium::placeholder {
+    color: rgba(58, 107, 175, 0.6);
+}
+
+/* Form Label Styling */
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--premium-white);
+}
+
+/* Form Group Styling */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+/* Form Validation Styling */
+.form-control-premium.is-valid {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 105, 0.25);
+}
+
+.form-control-premium.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.valid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #28a745;
+}
+
+.invalid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #dc3545;
+}
+
+/* Form Text Styling */
+.form-text {
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: rgba(58, 107, 175, 0.7);
+}
+
+/* Premium Image Hover Effects */
+.poster-image {
+    transition: all 0.3s ease;
+}
+
+.poster-image:hover {
+    transform: scale(1.05);
+}
+
+/* Premium Text Selection */
+::selection {
+    background: var(--primary-gold);
+    color: var(--premium-black);
+}
+
+::-moz-selection {
+    background: var(--primary-gold);
+    color: var(--premium-black);
+}
+
+/* Premium Focus Outline */
+*:focus {
+    outline: 2px solid var(--primary-gold);
+    outline-offset: 2px;
+}
+
+/* Premium Link Hover Effects */
+a {
+    transition: all 0.3s ease;
+}
+
+a:hover {
+    color: var(--primary-gold);
+}
+
+/* Premium Badge Animations */
+.badge-premium {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(30, 99, 219, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(30, 99, 219, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(30, 99, 219, 0);
+    }
+}
+
+/* Premium Modal Styling */
+.modal-premium .modal-content {
+    background: var(--premium-gray-light);
+    border: 1px solid rgba(30, 99, 219, 0.3);
+    border-radius: 16px;
+}
+
+.modal-premium .modal-header {
+    border-bottom: 1px solid rgba(30, 99, 219, 0.2);
+}
+
+.modal-premium .modal-footer {
+    border-top: 1px solid rgba(30, 99, 219, 0.2);
+}
+
+/* Premium Dropdown Styling */
+.dropdown-menu-premium {
+    background: var(--premium-gray-light);
+    border: 1px solid rgba(30, 99, 219, 0.3);
+    border-radius: 12px;
+    box-shadow: var(--shadow-medium);
+}
+
+.dropdown-item-premium {
+    color: var(--premium-white);
+    transition: all 0.3s ease;
+}
+
+.dropdown-item-premium:hover {
+    background: rgba(30, 99, 219, 0.1);
+    color: var(--primary-gold);
+}
+
+/* Premium Tooltip Styling */
+.tooltip-premium .tooltip-inner {
+    background: var(--premium-gray-light);
+    color: var(--premium-white);
+    border: 1px solid rgba(30, 99, 219, 0.3);
+    border-radius: 8px;
+}
+
+.tooltip-premium .tooltip-arrow::before {
+    border-top-color: var(--premium-gray-light);
+}
+
+/* Premium Progress Bar */
+.progress-premium {
+    background: var(--premium-gray);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar-premium {
+    background: var(--gradient-gold);
+    border-radius: 10px;
+}
+
+/* Premium Alert Animations */
+.alert-premium {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Premium Table Styling */
+.table-premium {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.table-premium tbody tr {
+    transition: all 0.3s ease;
+}
+
+.table-premium tbody tr:hover {
+    background: rgba(30, 99, 219, 0.1);
+}
+
+/* Premium Pagination */
+.pagination-premium .page-link {
+    background: var(--premium-gray-light);
+    border: 1px solid rgba(30, 99, 219, 0.3);
+    color: var(--premium-white);
+    transition: all 0.3s ease;
+}
+
+.pagination-premium .page-link:hover {
+    background: var(--primary-gold);
+    color: var(--premium-black);
+    border-color: var(--primary-gold);
+}
+
+.pagination-premium .page-item.active .page-link {
+    background: var(--primary-gold);
+    border-color: var(--primary-gold);
+    color: var(--premium-black);
+}
+
+/* Premium Breadcrumb */
+.breadcrumb-premium {
+    background: var(--premium-gray-light);
+    border-radius: 8px;
+    padding: 12px 16px;
+}
+
+.breadcrumb-premium .breadcrumb-item a {
+    color: var(--primary-gold);
+}
+
+.breadcrumb-premium .breadcrumb-item.active {
+    color: var(--premium-white);
+}
+
+/* Premium Spinner */
+.spinner-premium {
+    border: 3px solid rgba(30, 99, 219, 0.3);
+    border-top: 3px solid var(--primary-gold);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+/* Premium Skeleton Loading */
+.skeleton-premium {
+    background: linear-gradient(90deg, var(--premium-gray) 25%, var(--premium-gray-light) 50%, var(--premium-gray) 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Premium Responsive Utilities */
+@media (max-width: 768px) {
+    .card-premium {
+        margin-bottom: 1rem;
+    }
+    
+    .btn-premium {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .luxury-heading {
+        font-size: 2rem !important;
+    }
+}
+
+/* Premium Print Styles */
+@media print {
+    .navbar-premium,
+    .footer-premium,
+    .btn-premium {
+        display: none !important;
+    }
+    
+    body {
+        background: white !important;
+        color: black !important;
+    }
+    
+    .card-premium {
+        border: 1px solid #ccc !important;
+        box-shadow: none !important;
+    }
+}
+
+/* Global Button Animations (applies to Bootstrap and custom buttons) */
+.btn,
+.btn:link,
+.btn:visited,
+.btn-primary,
+.btn-outline-primary,
+.btn-premium,
+.btn-primary-brand,
+.btn-outline-brand {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.25s ease,
+              background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  will-change: transform, box-shadow;
+}
+
+.btn:hover,
+.btn-premium:hover,
+.btn-primary-brand:hover,
+.btn-outline-brand:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-soft);
+}
+
+.btn:active,
+.btn-premium:active,
+.btn-primary-brand:active,
+.btn-outline-brand:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn:focus-visible,
+.btn-premium:focus-visible,
+.btn-primary-brand:focus-visible,
+.btn-outline-brand:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 0.25rem rgba(58, 107, 175, 0.25);
+}
+
+/* Subtle shine sweep on hover */
+.btn::before,
+.btn-premium::before,
+.btn-primary-brand::before,
+.btn-outline-brand::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 120%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.35) 50%, transparent 70%);
+  transform: translateX(0);
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+
+.btn:hover::before,
+.btn-premium:hover::before,
+.btn-primary-brand:hover::before,
+.btn-outline-brand:hover::before {
+  left: 120%;
+}

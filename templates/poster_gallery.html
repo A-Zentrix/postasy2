@@ -1,0 +1,393 @@
+{% extends "base.html" %} {% block title %}My Posters - Postasy{% endblock %} {% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-0">
+            <i class="fas fa-images me-2"></i>My Poster Gallery
+        </h2>
+        <p class="text-muted mb-0">{{ posters.total }} poster{{ 's' if posters.total != 1 else '' }} created</p>
+    </div>
+    <div class="d-flex gap-2">
+        <button type="button" class="btn btn-outline-danger" id="bulkDeleteBtn" style="display: none;" onclick="bulkDeletePosters()">
+            <i class="fas fa-trash me-2"></i>Delete Selected
+        </button>
+
+        <a href="/poster/generate" class="btn btn-primary">
+            <i class="fas fa-plus-circle me-2"></i>Create New Poster
+        </a>
+
+
+    </div>
+</div>
+
+{% if posters.items %}
+<div class="row">
+    {% for poster in posters.items %}
+    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+        <div class="card poster-card h-100 shadow-sm">
+            <div class="position-relative">
+                <!-- Bulk Selection Checkbox -->
+                <div class="position-absolute top-0 start-0 m-2">
+                    <input type="checkbox" class="form-check-input poster-checkbox" id="poster-{{ poster.id }}" value="{{ poster.id }}" style="background-color: rgba(255, 255, 255, 0.9); border: 2px solid #fff;">
+                </div>
+                <img src="/static/uploads/posters/{{ poster.filename }}" alt="{{ poster.title }}" class="card-img-top poster-thumbnail" style="height: 200px; object-fit: cover; cursor: pointer;" onclick="window.location.href='/poster/view/{{ poster.id }}'">
+
+                <!-- Status Badges -->
+                <div class="position-absolute top-0 end-0 m-2">
+                    {% if poster.has_watermark %}
+                    <span class="badge bg-warning mb-1 d-block">
+                                    <i class="fas fa-water me-1"></i>Watermark
+                                </span> {% endif %} {% if poster.is_public %}
+                    <span class="badge bg-success">
+                                    <i class="fas fa-globe me-1"></i>Public
+                                </span> {% endif %}
+                </div>
+
+                <!-- Quick Action Overlay -->
+                <div class="position-absolute bottom-0 start-0 end-0 bg-dark bg-opacity-75 text-white p-2 opacity-0 hover-overlay" style="transition: opacity 0.3s;">
+                    <div class="btn-group w-100" role="group">
+                        <a href="/poster/view/{{ poster.id }}" class="btn btn-light btn-sm">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="{{ url_for('poster.edit', poster_id=poster.id) }}" class="btn btn-warning btn-sm">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="/static/uploads/posters/{{ poster.filename }}" download="{{ poster.title }}.png" class="btn btn-success btn-sm">
+                            <i class="fas fa-download"></i>
+                        </a>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="deletePoster({{ poster.id }}, '{{ poster.title|replace(" '", "\\' ")|replace('" ', '\\ "') }}', event)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body d-flex flex-column">
+                <h6 class="card-title mb-2">{{ poster.title }}</h6>
+                <p class="card-text text-muted small flex-grow-1">
+                    {{ poster.prompt[:80] }}{% if poster.prompt|length > 80 %}...{% endif %}
+                </p>
+
+                <div class="mt-auto">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>{{ poster.created_at.strftime('%b %d, %Y') }}
+                                </small>
+                        <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>{{ poster.created_at.strftime('%I:%M %p') }}
+                                </small>
+                    </div>
+
+                    <div class="btn-group w-100" role="group">
+                        <a href="/poster/view/{{ poster.id }}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-eye me-1"></i>View
+                        </a>
+                        <a href="{{ url_for('poster.edit', poster_id=poster.id) }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-edit me-1"></i>Edit
+                        </a>
+
+                        <a href="/poster/{{ poster.id }}/delete" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this poster?')" title="Direct Delete">
+                            <i class="fas fa-trash-alt me-1"></i>Detect Delete
+                        </a>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-success btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-download me-1"></i>
+                                    </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="/static/uploads/posters/{{ poster.filename }}" download="{{ poster.title }}.png">
+                                        <i class="fas fa-download me-2"></i>Download PNG
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#" onclick="sharePoster({{ poster.id }})">
+                                        <i class="fas fa-share-alt me-2"></i>Share Link
+                                    </a>
+                                </li>
+                                {% if not poster.is_public %}
+                                <li>
+                                    <a class="dropdown-item" href="#" onclick="makePosterPublic({{ poster.id }})">
+                                        <i class="fas fa-globe me-2"></i>Make Public
+                                    </a>
+                                </li>
+                                {% else %}
+                                <li>
+                                    <a class="dropdown-item" href="#" onclick="makePosterPrivate({{ poster.id }})">
+                                        <i class="fas fa-lock me-2"></i>Make Private
+                                    </a>
+                                </li>
+                                {% endif %}
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="#" onclick="deletePoster({{ poster.id }}, '{{ poster.title|replace(" '", "\\' ")|replace('" ', '\\ "') }}', event)">
+                                        <i class="fas fa-trash me-2"></i>Delete Poster
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="/poster/{{ poster.id }}/delete" onclick="return confirm('Are you sure you want to delete this poster?')">
+                                        <i class="fas fa-trash-alt me-2"></i>Direct Delete
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination would go here if needed -->
+{% if posters.items|length >= 12 %}
+<div class="text-center mt-4">
+    <button class="btn btn-outline-primary" onclick="loadMorePosters()">
+            <i class="fas fa-plus me-2"></i>Load More Posters
+        </button>
+</div>
+{% endif %} {% else %}
+<!-- Empty State -->
+<div class="text-center py-5">
+    <div class="mb-4">
+        <i class="fas fa-images fa-4x text-muted"></i>
+    </div>
+    <h4 class="text-muted mb-3">No posters yet</h4>
+    <p class="text-muted mb-4">
+        Create your first AI-powered poster to get started!<br> Use our AI to generate professional posters for your business.
+    </p>
+    <a href="/poster/generate" class="btn btn-primary btn-lg">
+        <i class="fas fa-plus-circle me-2"></i>Create Your First Poster
+    </a>
+</div>
+{% endif %}
+
+<!-- Share Modal -->
+<div class="modal fade" id="shareModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Share Poster</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="shareLink" class="form-label">Share Link</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="shareLink" readonly>
+                        <button class="btn btn-outline-secondary" type="button" onclick="copyShareLink()">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                <p class="text-muted small">
+                    <i class="fas fa-info-circle me-1"></i> This link will show your poster to anyone who has it.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} {% block extra_scripts %}
+<script>
+    // Hover effects for poster cards
+    document.addEventListener('DOMContentLoaded', function() {
+        const posterCards = document.querySelectorAll('.poster-card');
+
+        posterCards.forEach(card => {
+            const overlay = card.querySelector('.hover-overlay');
+
+            card.addEventListener('mouseenter', function() {
+                if (overlay) overlay.style.opacity = '1';
+            });
+
+            card.addEventListener('mouseleave', function() {
+                if (overlay) overlay.style.opacity = '0';
+            });
+        });
+    });
+
+    function sharePoster(posterId) {
+        const shareLink = window.location.origin + '/poster/view/' + posterId;
+        document.getElementById('shareLink').value = shareLink;
+
+        const modal = new bootstrap.Modal(document.getElementById('shareModal'));
+        modal.show();
+    }
+
+    function copyShareLink() {
+        const shareLink = document.getElementById('shareLink');
+        shareLink.select();
+        shareLink.setSelectionRange(0, 99999); // For mobile devices
+
+        navigator.clipboard.writeText(shareLink.value).then(function() {
+            // Show success feedback
+            const btn = event.target.closest('button');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i>';
+            btn.classList.remove('btn-outline-secondary');
+            btn.classList.add('btn-success');
+
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-outline-secondary');
+            }, 2000);
+        });
+    }
+
+    function makePosterPublic(posterId) {
+        if (confirm('Make this poster visible to everyone in the public gallery?')) {
+            fetch('/poster/toggle-public', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        poster_id: posterId,
+                        is_public: true
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Error updating poster: ' + data.error);
+                    }
+                });
+        }
+    }
+
+    function makePosterPrivate(posterId) {
+        if (confirm('Remove this poster from the public gallery?')) {
+            fetch('/poster/toggle-public', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        poster_id: posterId,
+                        is_public: false
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Error updating poster: ' + data.error);
+                    }
+                });
+        }
+    }
+
+    function loadMorePosters() {
+        // Implementation for pagination/infinite scroll
+        console.log('Load more posters functionality would go here');
+    }
+
+    function deletePoster(posterId, posterTitle, event) {
+        console.log('=== DELETE FUNCTION CALLED ===');
+        console.log('Poster ID:', posterId);
+        console.log('Poster Title:', posterTitle);
+
+        // Show immediate feedback
+        alert(`Delete function triggered for: ${posterTitle} (ID: ${posterId})`);
+
+        if (confirm(`Are you sure you want to delete "${posterTitle}"? This action cannot be undone.`)) {
+            console.log('User confirmed deletion');
+            alert('User confirmed deletion - proceeding...');
+
+            // Show loading state
+            const deleteBtn = event ? event.target.closest('button') : null;
+            if (deleteBtn) {
+                deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+                deleteBtn.disabled = true;
+                console.log('Button loading state applied');
+            }
+
+            // ULTRA SIMPLE APPROACH - Just redirect to delete URL
+            console.log('Redirecting to delete URL...');
+            window.location.href = `/poster/${posterId}/delete`;
+
+        } else {
+            console.log('User cancelled deletion');
+            alert('User cancelled deletion');
+        }
+    }
+
+    // Bulk delete functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('.poster-checkbox');
+        const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const checkedBoxes = document.querySelectorAll('.poster-checkbox:checked');
+                if (checkedBoxes.length > 0) {
+                    bulkDeleteBtn.style.display = 'inline-block';
+                    bulkDeleteBtn.textContent = `Delete Selected (${checkedBoxes.length})`;
+                } else {
+                    bulkDeleteBtn.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    function bulkDeletePosters() {
+        const checkedBoxes = document.querySelectorAll('.poster-checkbox:checked');
+        const posterIds = Array.from(checkedBoxes).map(cb => cb.value);
+
+        if (posterIds.length === 0) {
+            alert('Please select at least one poster to delete.');
+            return;
+        }
+
+        if (confirm(`Are you sure you want to delete ${posterIds.length} poster(s)? This action cannot be undone.`)) {
+            console.log('User confirmed bulk deletion of', posterIds.length, 'posters');
+
+            // Simple form submission approach
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/poster/bulk-delete';
+
+            // Add poster IDs
+            posterIds.forEach(id => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'poster_ids';
+                input.value = id;
+                form.appendChild(input);
+            });
+
+            // Add to page and submit
+            document.body.appendChild(form);
+            console.log('Submitting bulk delete form for', posterIds.length, 'posters');
+            form.submit();
+        } else {
+            console.log('User cancelled bulk deletion');
+        }
+    }
+
+    // Test function to verify delete functionality
+    function testDeleteFunction() {
+        console.log('=== TEST DELETE FUNCTION CALLED ===');
+        alert('Test delete function called - check console for logs');
+
+        // Test with dummy data
+        deletePoster(999, 'Test Poster', null);
+    }
+
+    // Simple test function that just redirects to delete URL
+    function simpleDeleteTest() {
+        console.log('=== SIMPLE DELETE TEST ===');
+        alert('Testing simple delete approach - redirecting to delete URL');
+
+        // Just redirect to delete URL
+        window.location.href = '/poster/1/delete';
+    }
+</script>
+{% endblock %}

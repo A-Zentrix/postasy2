@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+Allow: /auth/register
+Allow: /auth/login
+Allow: /landing
+Allow: /poster/public
+Allow: /static/
+
+Disallow: /dashboard
+Disallow: /profile/
+Disallow: /poster/generate
+Disallow: /poster/edit/
+Disallow: /payment/
+Disallow: /admin/
+
+Sitemap: {{ request.url_root }}sitemap.xml

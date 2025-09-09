@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Privacy Policy - Postasy{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <h1 class="luxury-heading mb-3">Privacy Policy</h1>
+  <p class="text-muted">Effective: {{ (now() if now else '2025') }}</p>
+
+  <h5 class="mt-4">1. What we collect</h5>
+  <p class="text-muted">Account details (name, email), content you upload (images, logos, posters), and usage data (feature interactions, device info). Payment is processed by Stripe—Postasy never stores full card details.</p>
+
+  <h5 class="mt-4">2. How we use data</h5>
+  <p class="text-muted">To provide the service, improve templates and AI features, prevent abuse, and support billing. We may send product emails; you can unsubscribe anytime.</p>
+
+  <h5 class="mt-4">3. Your control</h5>
+  <ul class="text-muted">
+    <li>Access, export, or delete your data by contacting support.</li>
+    <li>Delete generated posters and uploads from your dashboard.</li>
+    <li>Disable analytics cookies in your browser settings.</li>
+  </ul>
+
+  <h5 class="mt-4">4. Sharing</h5>
+  <p class="text-muted">We share data with trusted processors (hosting, analytics, payments) under strict agreements. We never sell personal data.</p>
+
+  <h5 class="mt-4">5. Security</h5>
+  <p class="text-muted">We apply encryption in transit, access controls, and continuous monitoring. No method is perfect—report issues to us immediately.</p>
+
+  <h5 class="mt-4">6. Children</h5>
+  <p class="text-muted">Postasy is not intended for children under 13. If we learn we collected such data, we will delete it.</p>
+
+  <h5 class="mt-4">7. Changes</h5>
+  <p class="text-muted">We may update this policy as the product evolves. Material changes will be announced in‑app or via email.</p>
+
+  <div class="mt-4 p-3 border rounded bg-premium-gray">
+    <strong>Contact</strong>
+    <p class="mb-0 text-muted">privacy@postasy.app</p>
+  </div>
+</div>
+{% endblock %}

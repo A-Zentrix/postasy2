@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Icon Test - Postasy</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    
+    <style>
+        .test-section {
+            margin: 2rem 0;
+            padding: 2rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        
+        .icon-test {
+            display: inline-block;
+            margin: 1rem;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            min-width: 120px;
+        }
+        
+        .icon-test i {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .dashboard-preview {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+        }
+        
+        .card-premium {
+            border: 1px solid rgba(58, 107, 175, 0.1);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+        
+        .card-premium:hover {
+            border-color: rgba(58, 107, 175, 0.2);
+            box-shadow: 0 10px 30px rgba(24, 66, 128, 0.1);
+        }
+        
+        .icon-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .icon-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(58, 107, 175, 0.1) 0%, rgba(24, 66, 128, 0.1) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            border: 2px solid rgba(58, 107, 175, 0.2);
+        }
+        
+        .empty-state-container {
+            background: linear-gradient(135deg, rgba(58, 107, 175, 0.05) 0%, rgba(24, 66, 128, 0.05) 100%);
+            border-radius: 16px;
+            border: 1px solid rgba(58, 107, 175, 0.1);
+            padding: 3rem;
+        }
+        
+        .text-premium-gold { color: #3a6baf !important; }
+        .text-premium-gold-light { color: #b7cbe7 !important; }
+        .bg-premium-gray { background-color: #f3f6fb !important; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center my-4">Postasy Icon and Dashboard Test</h1>
+        
+        <!-- Icon Test Section -->
+        <div class="test-section">
+            <h2>Font Awesome Icon Test</h2>
+            <p>Testing various Font Awesome icons to ensure they load correctly:</p>
+            
+            <div class="icon-test">
+                <i class="fas fa-images fa-3x text-primary"></i>
+                <span>Images</span>
+            </div>
+            
+            <div class="icon-test">
+                <i class="fas fa-users fa-3x text-success"></i>
+                <span>Users</span>
+            </div>
+            
+            <div class="icon-test">
+                <i class="fas fa-crown fa-3x text-warning"></i>
+                <span>Crown</span>
+            </div>
+            
+            <div class="icon-test">
+                <i class="fas fa-magic fa-3x text-info"></i>
+                <span>Magic</span>
+            </div>
+            
+            <div class="icon-test">
+                <i class="fas fa-palette fa-3x text-danger"></i>
+                <span>Palette</span>
+            </div>
+            
+            <div class="icon-test">
+                <i class="fas fa-user-tag fa-3x text-secondary"></i>
+                <span>User Tag</span>
+            </div>
+        </div>
+        
+        <!-- Dashboard Preview Section -->
+        <div class="test-section">
+            <h2>Dashboard Components Preview</h2>
+            <p>Testing dashboard styling and components:</p>
+            
+            <div class="dashboard-preview">
+                <!-- Stats Cards -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-3">
+                        <div class="card-premium text-center p-4">
+                            <div class="icon-wrapper mb-3">
+                                <i class="fas fa-images fa-3x text-premium-gold"></i>
+                            </div>
+                            <h3 class="text-premium-gold mb-2">0</h3>
+                            <p class="text-premium-gold-light mb-0">Your Posters</p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="card-premium text-center p-4">
+                            <div class="icon-wrapper mb-3">
+                                <i class="fas fa-users fa-3x text-premium-gold"></i>
+                            </div>
+                            <h3 class="text-premium-gold mb-2">4</h3>
+                            <p class="text-premium-gold-light mb-0">Total Users</p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="card-premium text-center p-4">
+                            <div class="icon-wrapper mb-3">
+                                <i class="fas fa-images fa-3x text-premium-gold"></i>
+                            </div>
+                            <h3 class="text-premium-gold mb-2">2</h3>
+                            <p class="text-premium-gold-light mb-0">All Posters</p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="card-premium text-center p-4">
+                            <div class="icon-wrapper mb-3">
+                                <i class="fas fa-crown fa-3x text-premium-gold"></i>
+                            </div>
+                            <h3 class="text-premium-gold mb-2">0</h3>
+                            <p class="text-premium-gold-light mb-0">Premium Users</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Empty State -->
+                <div class="empty-state-container text-center">
+                    <div class="empty-state-icon mb-4">
+                        <div class="icon-circle">
+                            <i class="fas fa-palette fa-4x text-premium-gold-light"></i>
+                        </div>
+                    </div>
+                    <h4 class="text-premium-gold mb-3">No posters yet</h4>
+                    <p class="text-premium-gold-light mb-4">Create your first poster to get started!</p>
+                    <button class="btn btn-primary btn-lg">
+                        <i class="fas fa-plus-circle me-2"></i>Create Your First Poster
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CSS Variables Test -->
+        <div class="test-section">
+            <h2>CSS Variables Test</h2>
+            <p>Testing if CSS variables are properly loaded:</p>
+            <div id="css-vars-display"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Display CSS variables
+        document.addEventListener('DOMContentLoaded', function() {
+            const root = getComputedStyle(document.documentElement);
+            const vars = [
+                '--font-family-primary',
+                '--font-weight-light',
+                '--font-weight-regular',
+                '--font-weight-medium',
+                '--font-weight-semibold',
+                '--font-weight-bold',
+                '--font-weight-extrabold',
+                '--font-weight-black'
+            ];
+            
+            let html = '<div class="row">';
+            vars.forEach(varName => {
+                const value = root.getPropertyValue(varName);
+                html += `
+                    <div class="col-md-6 mb-2">
+                        <strong>${varName}:</strong> 
+                        <code>${value || 'Not defined'}</code>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            
+            document.getElementById('css-vars-display').innerHTML = html;
+            
+            // Test Font Awesome loading
+            if (typeof FontAwesome === 'undefined') {
+                console.warn('Font Awesome not loaded');
+                document.querySelector('.test-section').innerHTML += '<div class="alert alert-warning mt-3">Font Awesome not loaded!</div>';
+            } else {
+                console.log('Font Awesome loaded successfully');
+                document.querySelector('.test-section').innerHTML += '<div class="alert alert-success mt-3">Font Awesome loaded successfully!</div>';
+            }
+        });
+    </script>
+</body>
+</html>

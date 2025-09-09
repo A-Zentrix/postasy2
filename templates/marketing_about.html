@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}About - Postasy{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row align-items-center g-4">
+    <div class="col-lg-6">
+      <h1 class="luxury-heading mb-3">Design, simplified</h1>
+      <p class="text-muted">Postasy helps creators and small teams publish studio‑quality posters in minutes. We combine tasteful templates, brand‑aware AI, and a distraction‑free editor.</p>
+      <ul class="text-muted">
+        <li>Opinionated defaults that look great out of the box</li>
+        <li>AI Brand Assistant to match your colors and tone</li>
+        <li>Scheduling that keeps your calendar full</li>
+      </ul>
+      <a class="btn btn-premium btn-premium-primary" href="{{ url_for('auth.register') }}">Get Started</a>
+    </div>
+    <div class="col-lg-6">
+      <div class="card-premium p-4">
+        <h5 class="mb-2">Our principles</h5>
+        <ol class="text-muted small mb-0 ps-3">
+          <li>Clarity over complexity</li>
+          <li>Defaults that respect your brand</li>
+          <li>Privacy and portability by design</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

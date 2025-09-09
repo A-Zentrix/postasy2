@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() if csrf_token else '' }}">
+    <title>{% block title %}Postasy - AI Poster Generator{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts - Single Standard Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <style>
+        :root {
+            /* Postasy palette */
+            --primary-gold: #3a6baf; /* primary */
+            --primary-gold-light: #b7cbe7; /* soft tint */
+            --primary-gold-dark: #184280; /* deep */
+            --luxury-purple: #184280; /* use deep as secondary base */
+            --luxury-purple-light: #3a6baf;
+            --luxury-purple-dark: #10224a;
+            /* Light theme neutrals */
+            --premium-black: #ffffff;          /* app surfaces */
+            --premium-gray: #f3f6fb;           /* section backgrounds */
+            --premium-gray-light: #ffffff;      /* cards/panels */
+            --premium-white: #0f172a;          /* primary text */
+            --accent-emerald: #56D1C1; /* subtle accent */
+            --accent-sapphire: #3a6baf; /* align accent blue */
+            --accent-ruby: #F8646A; /* soft contrast */
+            
+            --gradient-luxury: linear-gradient(135deg, #ffffff 0%, #f5f8fd 100%);
+            --gradient-premium: linear-gradient(135deg, #f4f7fc 0%, #ffffff 100%);
+            --gradient-dark: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+            --gradient-gold: linear-gradient(135deg, #184280 0%, #3a6baf 50%, #184280 100%);
+            --gradient-purple: linear-gradient(135deg, #10224a 0%, #184280 50%, #10224a 100%);
+            
+            --shadow-soft: 0 10px 30px rgba(24, 66, 128, 0.08);
+            --shadow-medium: 0 20px 40px rgba(24, 66, 128, 0.12);
+            --shadow-strong: 0 30px 60px rgba(24, 66, 128, 0.16);
+            --shadow-gold: 0 8px 25px rgba(58, 107, 175, 0.25);
+        }
+        
+        body {
+            background: var(--premium-black);
+            color: var(--premium-white);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        .luxury-heading { font-family: var(--font-family-primary); font-weight: 700; }
+        
+        /* Premium Navigation (light) */
+        .navbar-premium {
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(58, 107, 175, 0.15);
+            padding: 1rem 0;
+        }
+        
+        .navbar-brand-premium {
+            font-family: var(--font-family-primary);
+            font-weight: 800;
+            font-size: 1.8rem;
+            color: var(--primary-gold) !important;
+            text-decoration: none;
+        }
+        
+        .nav-link-premium {
+            color: #1f2937 !important;
+            font-weight: 500;
+            margin: 0 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link-premium::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-gold);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        .nav-link-premium:hover::after { width: 100%; }
+        .nav-link-premium:hover { color: var(--primary-gold) !important; }
+        
+        /* Premium Buttons */
+        .btn-premium {
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-premium::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s;
+        }
+        
+        .btn-premium:hover::before {
+            left: 100%;
+        }
+        
+        .btn-premium-primary {
+            background: var(--gradient-gold);
+            color: var(--premium-black);
+            box-shadow: var(--shadow-gold);
+        }
+        
+        .btn-premium-primary:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(24, 66, 128, 0.40);
+            color: var(--premium-black);
+        }
+        
+        .btn-premium-outline {
+            background: transparent;
+            color: var(--primary-gold);
+            border: 2px solid var(--primary-gold);
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn-premium-outline:hover {
+            background: var(--primary-gold);
+            color: var(--premium-black);
+            transform: translateY(-2px);
+        }
+        
+        /* Components tuned for light */
+        .card-premium {
+            background: var(--premium-gray-light);
+            border: 1px solid rgba(24, 66, 128, 0.12);
+            border-radius: 16px;
+            transition: all 0.4s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        }
+        .card-premium:hover { transform: translateY(-5px); box-shadow: var(--shadow-soft); border-color: var(--primary-gold); }
+        
+        .form-control-premium { background: #ffffff; border: 1px solid rgba(24,66,128,0.18); color: #0f172a; border-radius: 12px; padding: 12px 16px; transition: all 0.3s ease; }
+        .form-control-premium:focus { background: #ffffff; border-color: var(--primary-gold); color: #0f172a; box-shadow: 0 0 0 0.25rem rgba(58, 107, 175, 0.15); }
+        .form-control-premium::placeholder { color: #8aa5cd; }
+        
+        .alert-premium { background: #ffffff; border: 1px solid rgba(24,66,128,0.18); border-radius: 12px; color: #0f172a; }
+        .alert-premium-success { border-color: var(--accent-emerald); background: linear-gradient(135deg, #ffffff 0%, rgba(86, 209, 193, 0.10) 100%); }
+        .alert-premium-danger { border-color: var(--accent-ruby); background: linear-gradient(135deg, #ffffff 0%, rgba(248,100,106,0.10) 100%); }
+        .alert-premium-warning { border-color: var(--primary-gold); background: linear-gradient(135deg, #ffffff 0%, rgba(58,107,175,0.10) 100%); }
+        
+        /* Premium Badges */
+        .badge-premium {
+            background: var(--gradient-gold);
+            color: var(--premium-black);
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+        
+        /* Premium Tables */
+        .table-premium {
+            background: var(--premium-gray-light);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .table-premium th {
+            background: var(--premium-gray);
+            color: var(--primary-gold);
+            border-bottom: 1px solid rgba(24, 66, 128, 0.3);
+            font-weight: 600;
+        }
+        
+        .table-premium td {
+            color: var(--premium-white);
+            border-bottom: 1px solid rgba(24, 66, 128, 0.1);
+        }
+        
+        .footer-premium { background: #ffffff; border-top: 1px solid rgba(58,107,175,0.15); padding: 50px 0 30px; }
+        .footer-text-premium { color: #6b7280; text-align: center; }
+        
+        .text-premium-gold { color: var(--primary-gold) !important; }
+        .bg-premium-dark { background: #ffffff !important; }
+        .bg-premium-gray { background: var(--premium-gray) !important; }
+        .bg-premium-gray-light { background: var(--premium-gray-light) !important; }
+        .border-premium-gold { border-color: var(--primary-gold) !important; }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar-brand-premium { font-size: 1.5rem; }
+            .btn-premium { padding: 10px 20px; font-size: 0.9rem; }
+        }
+    </style>
+    
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <!-- Premium Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-premium fixed-top">
+        <div class="container">
+            <a class="navbar-brand-premium d-flex align-items-center gap-2" href="{{ url_for('main.index') }}">
+                <img src="/static/uploads/logos/image.png" alt="Postasy" class="brand-logo"/>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link-premium" href="{{ url_for('main.dashboard') }}">
+                                <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link-premium" href="{{ url_for('poster.generate') }}">
+                                <i class="fas fa-plus-circle me-1"></i>Generate
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link-premium" href="{{ url_for('poster.gallery') }}">
+                                <i class="fas fa-images me-1"></i>Gallery
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link-premium" href="{{ url_for('poster.public_gallery') }}">
+                                <i class="fas fa-globe me-1"></i>Explore
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+                
+                <ul class="navbar-nav">
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link-premium dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle me-1"></i>{{ current_user.username }}
+                                {% if current_user.has_premium_access() %}
+                                    <span class="badge-premium ms-1">Premium</span>
+                                {% endif %}
+                            </a>
+                            <ul class="dropdown-menu bg-premium-gray-light border-premium-gold">
+                                <li><a class="dropdown-item text-premium-gold" href="{{ url_for('profile.public_profile', username=current_user.username) }}">
+                                    <i class="fas fa-eye me-2"></i>View Profile
+                                </a></li>
+                                <li><a class="dropdown-item text-premium-gold" href="{{ url_for('profile.manage') }}">
+                                    <i class="fas fa-user-edit me-2"></i>Edit Profile
+                                </a></li>
+                                <li><a class="dropdown-item text-premium-gold" href="{{ url_for('profile.settings') }}">
+                                    <i class="fas fa-cog me-2"></i>Settings
+                                </a></li>
+                                {% if not current_user.has_premium_access() %}
+                                    <li><a class="dropdown-item text-premium-gold" href="{{ url_for('payment.plans') }}">
+                                        <i class="fas fa-crown me-2"></i>Upgrade
+                                    </a></li>
+                                {% else %}
+                                    <li><a class="dropdown-item text-premium-gold" href="{{ url_for('payment.portal') }}">
+                                        <i class="fas fa-credit-card me-2"></i>Billing
+                                    </a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider border-premium-gold"></li>
+                                <li><a class="dropdown-item text-premium-gold" href="{{ url_for('auth.logout') }}">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link-premium" href="{{ url_for('auth.login') }}">Sign In</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn-premium btn-premium-primary" href="{{ url_for('auth.register') }}">
+                                <i class="fas fa-rocket"></i>Get Started
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main style="margin-top: 80px; min-height: calc(100vh - 80px);">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="container mt-3">
+                    {% for category, message in messages %}
+                        <div class="alert alert-premium alert-premium-{{ category }} alert-dismissible fade show" role="alert">
+                            <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'danger' %}exclamation-triangle{% elif category == 'warning' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Premium Footer -->
+    <footer class="footer-premium">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <p class="footer-text-premium">
+                        &copy; 2025 Postasy. All rights reserved. |
+                        <a href="{{ url_for('main.about_page') }}" class="text-decoration-none text-premium-gold">About</a> |
+                        <a href="{{ url_for('main.pricing_page') }}" class="text-decoration-none text-premium-gold">Pricing</a> |
+                        <a href="{{ url_for('main.privacy_page') }}" class="text-decoration-none text-premium-gold">Privacy</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all cards and elements for animation
+        document.querySelectorAll('.card-premium, .btn-premium').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

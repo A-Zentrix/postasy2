@@ -1,0 +1,404 @@
+/* Postasy variables fallback for optimized CSS */
+:root {
+  --primary-gold: #3a6baf;
+  --primary-gold-dark: #184280;
+  --primary-gold-light: #b7cbe7;
+  --gradient-gold: linear-gradient(135deg, #184280 0%, #3a6baf 50%, #184280 100%);
+  
+  /* Font System Variables */
+  --font-family-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --font-weight-black: 900;
+}
+
+/* Global Font System - One Standard Font for Entire App */
+* {
+  font-family: var(--font-family-primary) !important;
+}
+
+/* Ensure all text elements use the standard font */
+body,
+html,
+input,
+textarea,
+select,
+button,
+label,
+span,
+div,
+p,
+h1, h2, h3, h4, h5, h6,
+a,
+li,
+td,
+th,
+caption,
+legend,
+fieldset,
+optgroup,
+option {
+  font-family: var(--font-family-primary) !important;
+}
+
+/* Font weight utilities for consistent typography */
+.text-light { font-weight: var(--font-weight-light) !important; }
+.text-regular { font-weight: var(--font-weight-regular) !important; }
+.text-medium { font-weight: var(--font-weight-medium) !important; }
+.text-semibold { font-weight: var(--font-weight-semibold) !important; }
+.text-bold { font-weight: var(--font-weight-bold) !important; }
+.text-extrabold { font-weight: var(--font-weight-extrabold) !important; }
+.text-black { font-weight: var(--font-weight-black) !important; }
+
+/* Override any Bootstrap or other framework font declarations */
+.navbar-brand,
+.navbar-nav .nav-link,
+.btn,
+.form-control,
+.form-select,
+.form-label,
+.alert,
+.card-title,
+.card-text,
+.modal-title,
+.modal-body,
+.dropdown-menu,
+.dropdown-item,
+.table,
+.table th,
+.table td,
+.pagination .page-link,
+.breadcrumb,
+.breadcrumb-item,
+.badge,
+.tooltip,
+.popover,
+.list-group,
+.list-group-item {
+  font-family: var(--font-family-primary) !important;
+}
+
+/* Ensure canvas and editor elements use the standard font */
+#poster-canvas,
+.canvas-container,
+.editor-container,
+.text-editor,
+[contenteditable="true"] {
+  font-family: var(--font-family-primary) !important;
+}
+
+/* Override any specific font declarations that might exist */
+.luxury-heading,
+.navbar-brand-premium,
+.brand-text,
+.heading-font,
+.title-font {
+  font-family: var(--font-family-primary) !important;
+}
+
+/* Font Awesome Icon Fixes - Ensure icons are properly displayed */
+.fas, .far, .fab, .fal, .fad {
+  font-family: "Font Awesome 6 Free", "Font Awesome 6 Pro", "Font Awesome 6 Brands" !important;
+  font-style: normal !important;
+  font-variant: normal !important;
+  text-rendering: auto !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
+.fas {
+  font-weight: 900 !important;
+}
+
+.far {
+  font-weight: 400 !important;
+}
+
+.fab {
+  font-weight: 400 !important;
+}
+
+/* Ensure icon containers are properly sized */
+.icon-wrapper {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 1em !important;
+  min-height: 1em !important;
+}
+
+/* Fix for icon sizing */
+.fa-1x { font-size: 1em !important; }
+.fa-2x { font-size: 2em !important; }
+.fa-3x { font-size: 3em !important; }
+.fa-4x { font-size: 4em !important; }
+.fa-5x { font-size: 5em !important; }
+
+/* Dashboard specific icon fixes */
+.card-premium .fas,
+.card-premium .far,
+.card-premium .fab {
+  display: inline-block !important;
+  width: auto !important;
+  height: auto !important;
+  line-height: 1 !important;
+}
+
+/* Empty state icon styling */
+.empty-state-icon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.icon-circle {
+  width: 120px !important;
+  height: 120px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, rgba(58, 107, 175, 0.1) 0%, rgba(24, 66, 128, 0.1) 100%) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 auto !important;
+  border: 2px solid rgba(58, 107, 175, 0.2) !important;
+}
+
+.empty-state-container {
+  background: linear-gradient(135deg, rgba(58, 107, 175, 0.05) 0%, rgba(24, 66, 128, 0.05) 100%) !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(58, 107, 175, 0.1) !important;
+  padding: 3rem !important;
+}
+
+/* Form Control Premium Styling */
+.form-control-premium {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--premium-white);
+    background-color: rgba(255, 255, 255, 0.9);
+    background-clip: padding-box;
+    border: 2px solid rgba(58, 107, 175, 0.2);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-control-premium:focus {
+    transform: scale(1.02);
+    border-color: var(--primary-gold);
+    box-shadow: 0 0 0 0.2rem rgba(58, 107, 175, 0.25);
+    outline: none;
+}
+
+.form-control-premium::placeholder {
+    color: rgba(58, 107, 175, 0.6);
+}
+
+/* Form Label Styling */
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--premium-white);
+}
+
+/* Form Group Styling */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+/* Form Validation Styling */
+.form-control-premium.is-valid {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 105, 0.25);
+}
+
+.form-control-premium.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.valid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #28a745;
+}
+
+.invalid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #dc3545;
+}
+
+/* Form Text Styling */
+.form-text {
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: rgba(58, 107, 175, 0.7);
+}
+
+/* Postasy - Optimized CSS for Production */
+
+/* Performance Optimizations */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Preload critical fonts */
+@font-face {
+    font-family: 'Inter';
+    font-display: swap;
+    src: url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+}
+
+/* Critical above-the-fold styles */
+.navbar {
+    transition: background-color 0.3s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* Accessibility improvements */
+.btn:focus,
+.form-control:focus,
+.form-select:focus {
+    outline: 2px solid #4A90E2;
+    outline-offset: 2px;
+}
+
+/* Skip to main content for screen readers */
+.skip-to-main {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: #000;
+    color: #fff;
+    padding: 8px;
+    text-decoration: none;
+    z-index: 9999;
+}
+
+.skip-to-main:focus {
+    top: 6px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .btn-primary {
+        background-color: #000;
+        border-color: #000;
+    }
+    
+    .text-muted {
+        color: #000 !important;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Print styles */
+@media print {
+    .navbar,
+    .footer,
+    .btn {
+        display: none !important;
+    }
+    
+    .container {
+        width: 100% !important;
+        max-width: none !important;
+    }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .btn-lg {
+        padding: 12px 24px;
+        font-size: 1rem;
+    }
+}
+
+/* Performance: GPU acceleration for animations */
+.card:hover,
+.btn:hover,
+.feature-card:hover {
+    transform: translateZ(0);
+    will-change: transform;
+}
+
+/* Optimize canvas rendering */
+#poster-canvas {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: optimize-contrast;
+}
+
+/* Loading states */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Toast notifications */
+.toast-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1055;
+}
+
+/* Error states */
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.invalid-feedback {
+    display: block;
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* Success states */
+.is-valid {
+    border-color: #28a745 !important;
+}
+
+.valid-feedback {
+    display: block;
+    color: #28a745;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
