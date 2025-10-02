@@ -1,0 +1,72 @@
+{% extends "base_fastapi.html" %}
+
+{% block title %}View Poster - {{ poster.title }} - Postasy{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <h3 class="card-title">{{ poster.title }}</h3>
+                    <p class="text-muted">Created on {{ poster.created_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                </div>
+                
+                <!-- Poster Image -->
+                <div class="text-center mb-4">
+                    <img src="/static/uploads/posters/{{ poster.filename }}" 
+                         alt="{{ poster.title }}" 
+                         class="img-fluid rounded shadow"
+                         style="max-height: 600px;">
+                </div>
+                
+                <!-- Poster Details -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Prompt Used:</h5>
+                        <p class="text-muted">{{ poster.prompt }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Profile Information Included:</h5>
+                        {% set displayed_fields = poster.get_displayed_fields_list() %}
+                        {% if displayed_fields %}
+                            <ul class="list-unstyled">
+                                {% for field in displayed_fields %}
+                                    <li><i class="fas fa-check text-success me-2"></i>{{ field.replace('_', ' ').title() }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted">No profile information included</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="d-flex gap-2 justify-content-center mt-4 flex-wrap">
+                    <a href="{{ url_for('poster.edit', poster_id=poster.id) }}" class="btn btn-warning">
+                        <i class="fas fa-edit me-2"></i>Edit Poster
+                    </a>
+                    <a href="/static/uploads/posters/{{ poster.filename }}" 
+                       download="{{ poster.title }}.png" 
+                       class="btn btn-primary">
+                        <i class="fas fa-download me-2"></i>Download
+                    </a>
+                    <a href="/poster/gallery" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Gallery
+                    </a>
+                    <a href="/poster/generate" class="btn btn-success">
+                        <i class="fas fa-plus me-2"></i>Create New
+                    </a>
+                </div>
+                
+                {% if poster.has_watermark %}
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-info-circle me-2"></i>
+                        This poster includes a watermark. <a href="{{ url_for('payment.plans') }}">Upgrade to Premium</a> for watermark-free downloads.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

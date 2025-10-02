@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In - Postasy{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card-premium p-4">
+                <div class="text-center mb-4">
+                    <div class="mb-3">
+                        <i class="fas fa-crown fa-3x text-premium-gold"></i>
+                    </div>
+                    <h2 class="luxury-heading text-premium-gold mb-2">Welcome Back</h2>
+                    <p class="text-premium-gold-light">Sign in to your Postasy account</p>
+                </div>
+                
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="username" class="form-label text-premium-gold fw-semibold">Username</label>
+                        <input type="text" class="form-control-premium" id="username" name="username" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label text-premium-gold fw-semibold">Password</label>
+                        <input type="password" class="form-control-premium" id="password" name="password" required>
+                    </div>
+                    
+                    <div class="mb-4 form-check">
+                        <input type="checkbox" class="form-check-input" id="remember_me" name="remember_me" value="true">
+                        <label class="form-check-label text-premium-gold-light" for="remember_me">Remember me</label>
+                    </div>
+                    
+                    <div class="d-grid mb-4">
+                        <button type="submit" class="btn-premium btn-premium-primary">
+                            <i class="fas fa-sign-in-alt"></i>Sign In
+                        </button>
+                    </div>
+                </form>
+                
+                <hr class="my-4 border-premium-gold">
+                
+                <div class="text-center">
+                    <p class="mb-0 text-premium-gold-light">Don't have an account? 
+                        <a href="{{ url_for('auth.register') }}" class="text-premium-gold text-decoration-none fw-semibold">Sign up</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

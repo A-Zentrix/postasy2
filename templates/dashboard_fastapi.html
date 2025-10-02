@@ -1,0 +1,314 @@
+{% extends "base_fastapi.html" %}
+
+{% block title %}Dashboard - Postasy{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="mb-3">
+            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+            {% if is_admin %}
+                <span class="badge bg-danger ms-2">MASTER ADMIN</span>
+            {% endif %}
+            <small class="text-muted">Welcome back, {{ user.username }}!</small>
+        </h2>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="mb-0">{{ total_posters }}</h4>
+                        <p class="mb-0">Total Posters</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-images fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="mb-0">{{ weekly_posters }}</h4>
+                        <p class="mb-0">This Week</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-calendar-week fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="mb-0">{{ 'Admin' if is_admin else 'Premium' if user.is_premium else 'Free' }}</h4>
+                        <p class="mb-0">Account Type</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-{{ 'shield-alt' if is_admin else 'crown' if user.is_premium else 'user' }} fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="mb-0">∞</h4>
+                        <p class="mb-0">{{ 'Unlimited' if is_admin else 'Downloads' }}</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-download fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Quick Actions</h5>
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <a href="/poster/generate" class="btn btn-primary w-100">
+                            <i class="fas fa-plus-circle me-2"></i>Create New Poster
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="/poster/gallery" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-images me-2"></i>View Gallery
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="/profile/edit" class="btn btn-outline-secondary w-100">
+                            <i class="fas fa-user-edit me-2"></i>Edit Profile
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        {% if not user.is_premium and not is_admin %}
+                            <a href="{{ url_for('payment.plans') }}" class="btn btn-outline-warning w-100">
+                                <i class="fas fa-crown me-2"></i>Upgrade to Premium
+                            </a>
+                        {% elif user.is_premium %}
+                            <a href="{{ url_for('payment.plans') }}" class="btn btn-outline-info w-100">
+                                <i class="fas fa-cog me-2"></i>Manage Subscription
+                            </a>
+                        {% else %}
+                            <div class="btn btn-outline-danger w-100 disabled">
+                                <i class="fas fa-shield-alt me-2"></i>Admin Account
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Admin Panel (Only visible to master admin) -->
+{% if is_admin and admin_stats %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-shield-alt me-2"></i>Master Admin Panel
+                    <small class="opacity-75 ms-2">Internal Testing & Administration</small>
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h4 class="text-primary">{{ admin_stats.total_users }}</h4>
+                                <small class="text-muted">Total Users</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h4 class="text-success">{{ admin_stats.total_all_posters }}</h4>
+                                <small class="text-muted">All Posters</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h4 class="text-warning">{{ admin_stats.premium_users }}</h4>
+                                <small class="text-muted">Premium Users</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert alert-info mb-0">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Master Admin Features:</strong> Unlimited poster generation, no watermarks, bypasses all usage limits. 
+                    This account is hidden from regular user analytics and is for internal testing purposes only.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Recent Posters -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Recent Posters</h5>
+                <a href="/poster/gallery" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                {% if recent_posters and recent_posters|length > 0 %}
+                    <div class="row">
+                        {% for poster in recent_posters %}
+                            <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                                <div class="card poster-card h-100">
+                                    <div class="position-relative">
+                                        <img src="/static/uploads/posters/{{ poster.filename }}" 
+                                             alt="{{ poster.title }}" 
+                                             class="card-img-top poster-thumbnail"
+                                             style="height: 180px; object-fit: cover;">
+                                        {% if poster.has_watermark %}
+                                            <span class="badge bg-warning position-absolute top-0 end-0 m-2">
+                                                <i class="fas fa-water me-1"></i>
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="card-body d-flex flex-column">
+                                        <h6 class="card-title">{{ poster.title }}</h6>
+                                        <p class="card-text text-muted small flex-grow-1">
+                                            {{ poster.prompt[:60] }}{% if poster.prompt|length > 60 %}...{% endif %}
+                                        </p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted">{{ poster.created_at.strftime('%b %d') }}</small>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="/poster/view/{{ poster.id }}" class="btn btn-outline-primary btn-sm">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="/poster/edit/{{ poster.id }}" class="btn btn-outline-secondary btn-sm">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="/static/uploads/posters/{{ poster.filename }}" 
+                                                   download="{{ poster.title }}.png" 
+                                                   class="btn btn-outline-success btn-sm">
+                                                    <i class="fas fa-download"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state-container text-center py-5">
+                        <div class="empty-state-icon mb-4">
+                            <div class="icon-circle">
+                                <i class="fas fa-palette fa-4x text-muted"></i>
+                            </div>
+                        </div>
+                        <h5 class="text-muted mb-3">No posters yet</h5>
+                        <p class="text-muted mb-4">Create your first AI-powered poster to get started!</p>
+                        <a href="/poster/generate" class="btn btn-primary btn-lg">
+                            <i class="fas fa-plus-circle me-2"></i>Create First Poster
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.icon-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(0, 123, 255, 0.1) 0%, rgba(40, 167, 69, 0.1) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    border: 2px solid rgba(0, 123, 255, 0.2);
+}
+
+.empty-state-container {
+    background: linear-gradient(135deg, rgba(0, 123, 255, 0.05) 0%, rgba(40, 167, 69, 0.05) 100%);
+    border-radius: 16px;
+    border: 1px solid rgba(0, 123, 255, 0.1);
+    padding: 3rem;
+}
+
+.poster-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.poster-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.card {
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn {
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Ensure Font Awesome icons are loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if Font Awesome is loaded
+    if (typeof FontAwesome === 'undefined') {
+        console.warn('Font Awesome not loaded, attempting to load...');
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+        document.head.appendChild(link);
+    }
+});
+</script>
+{% endblock %}

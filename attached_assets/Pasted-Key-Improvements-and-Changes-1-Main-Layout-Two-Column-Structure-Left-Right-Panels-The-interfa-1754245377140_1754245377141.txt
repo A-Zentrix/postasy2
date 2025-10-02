@@ -1,0 +1,21 @@
+Key Improvements and Changes
+1. Main Layout: Two-Column Structure
+Left & Right Panels: The interface is now split into two main sections.
+Left Panel (Tools & Controls): All editing tools, layer management, properties, and export options are neatly organized on the left side. This creates a dedicated "control" area.
+Right Panel (Canvas): The right, and larger, portion of the screen is now the canvas. This gives the poster itself prominence and provides a bigger, unobstructed workspace.
+2. Fixing the "Loading Your Poster" Experience
+The vague loading bar at the bottom has been replaced with a much clearer, more user-friendly loading state.
+Central Loading Indicator: When the poster is being loaded, a loading indicator (spinner) appears directly on the canvas area.
+Clear Messaging: The text "Loading your poster..." is displayed in the center of the canvas, so the user knows exactly what is happening. This state disappears as soon as the poster is ready to be edited.
+3. Redesigned Toolbar and Icons
+The tools have been reorganized for clarity and ease of use.
+Larger, Clearer Icons: All icons have been made larger and visually simpler, making them easier to identify and click. They are aligned in a single, clean column.
+Logical Grouping: Tools are grouped by function. A new "Add" section is proposed, where you can add new elements like Text, Images, or Shapes. This is more intuitive than having separate icons for each.
+Descriptive Labels: Hovering over an icon would show a tooltip (e.g., "Add Text Box") for new users.
+4. Improved Alignment and Buttons
+Header Bar:
+The document title ("hello" in the original image) is now prominently displayed and editable at the top.
+The primary action buttons, "Save Changes" (green, primary button) and "Back to Gallery" (outline, secondary button), are moved to the top header for high visibility and easy access.
+Organized Panels: The left panel uses collapsible sections (accordions) for Layers, Properties, and Export. This keeps the workspace tidy, allowing the user to focus on one task at a time.
+Consistent Buttons: All buttons, especially the export options ("Export as PNG", "JPG", "PDF"), are now styled identically and are neatly stacked for better alignment and readability.
+By implementing these changes, the "Posterly" editor will feel more professional, intuitive, and efficient, providing a much-improved experience for your users.

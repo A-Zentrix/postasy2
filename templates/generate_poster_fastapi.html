@@ -1,0 +1,153 @@
+{% extends "base_fastapi.html" %}
+
+{% block title %}Generate Poster - Postasy{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <h3 class="card-title">
+                        <i class="fas fa-magic me-2"></i>Generate AI Poster
+                    </h3>
+                    <p class="text-muted">
+                        Describe your poster and choose which profile information to include
+                    </p>
+                </div>
+                
+                {% if error %}
+                    <div class="alert alert-danger">
+                        {{ error }}
+                    </div>
+                {% endif %}
+                
+                <form method="POST" id="posterForm">
+                    <!-- Poster Details -->
+                    <div class="mb-4">
+                        <h5 class="border-bottom pb-2 mb-3">Poster Details</h5>
+                        
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Poster Title</label>
+                            <input type="text" class="form-control" id="title" name="title" required 
+                                   placeholder="Enter a title for your poster">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="prompt" class="form-label">Poster Description</label>
+                            <textarea class="form-control" id="prompt" name="prompt" rows="4" required
+                                      placeholder="Describe your poster in detail..." 
+                                      value="{{ prompt if prompt else '' }}"></textarea>
+                            <div class="form-text">
+                                Be specific about style, colors, theme, and visual elements you want.
+                            </div>
+                        </div>
+                        
+                        <!-- Example Prompts -->
+                        <div class="mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title mb-2">💡 Example Prompts</h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <small class="d-block mb-2"><strong>Business Launch:</strong><br>
+                                            "Modern tech company poster with sleek blue and white design, abstract geometric patterns, professional office background, space for contact details"</small>
+                                            
+                                            <small class="d-block mb-2"><strong>Restaurant Promotion:</strong><br>
+                                            "Vibrant food poster with warm colors, fresh ingredients background, elegant typography, Italian restaurant theme"</small>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <small class="d-block mb-2"><strong>Event Announcement:</strong><br>
+                                            "Professional conference poster with modern design, corporate blue theme, clean layout, business networking event"</small>
+                                            
+                                            <small class="d-block mb-2"><strong>Sale/Discount:</strong><br>
+                                            "Eye-catching retail sale poster with bold colors, dynamic layout, modern shopping theme, promotional design"</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Information to Include -->
+                    <div class="mb-4">
+                        <h5 class="border-bottom pb-2 mb-3">Profile Information to Include</h5>
+                        <p class="text-muted small mb-3">Choose which information from your profile to display on the poster</p>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" name="display_fields" value="full_name" id="include_name">
+                                    <label class="form-check-label" for="include_name">
+                                        Full Name
+                                        {% if current_user.full_name %}
+                                            <small class="text-muted">({{ current_user.full_name }})</small>
+                                        {% endif %}
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" name="display_fields" value="business_name" id="include_business">
+                                    <label class="form-check-label" for="include_business">
+                                        Business Name
+                                        {% if current_user.business_name %}
+                                            <small class="text-muted">({{ current_user.business_name }})</small>
+                                        {% endif %}
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" name="display_fields" value="phone" id="include_phone">
+                                    <label class="form-check-label" for="include_phone">
+                                        Phone Number
+                                        {% if current_user.phone %}
+                                            <small class="text-muted">({{ current_user.phone }})</small>
+                                        {% endif %}
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" name="display_fields" value="website" id="include_website">
+                                    <label class="form-check-label" for="include_website">
+                                        Website
+                                        {% if current_user.website %}
+                                            <small class="text-muted">({{ current_user.website }})</small>
+                                        {% endif %}
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" name="display_fields" value="address" id="include_address">
+                                    <label class="form-check-label" for="include_address">
+                                        Address
+                                        {% if current_user.address %}
+                                            <small class="text-muted">({{ current_user.address[:30] }}...)</small>
+                                        {% endif %}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-magic me-2"></i>Generate Poster
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Add loading state to generate button
+document.getElementById('posterForm').addEventListener('submit', function(e) {
+    const btn = this.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generating...';
+});
+</script>
+{% endblock %}

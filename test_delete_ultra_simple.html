@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultra Simple Delete Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Ultra Simple Delete Test</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Test Poster 1</h5>
+                        <p class="card-text">This is a test poster for deletion.</p>
+                        <button type="button" class="btn btn-danger" onclick="testDelete(1, 'Test Poster 1')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                        <a href="/poster/1/delete" class="btn btn-warning" onclick="return confirm('Are you sure?')">
+                            <i class="fas fa-trash-alt"></i> Direct Delete
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Test Poster 2</h5>
+                        <p class="card-text">Another test poster for deletion.</p>
+                        <button type="button" class="btn btn-danger" onclick="testDelete(2, 'Test Poster 2')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                        <a href="/poster/2/delete" class="btn btn-warning" onclick="return confirm('Are you sure?')">
+                            <i class="fas fa-trash-alt"></i> Direct Delete
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <h3>Console Output:</h3>
+            <div id="console-output" class="bg-dark text-light p-3" style="height: 300px; overflow-y: auto; font-family: monospace;">
+                <div>Ready for testing...</div>
+            </div>
+        </div>
+        
+        <div class="mt-3">
+            <button class="btn btn-primary" onclick="clearConsole()">Clear Console</button>
+            <button class="btn btn-success" onclick="testDirectRedirect()">Test Direct Redirect</button>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            const console = document.getElementById('console-output');
+            const timestamp = new Date().toLocaleTimeString();
+            console.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            console.scrollTop = console.scrollHeight;
+        }
+
+        function clearConsole() {
+            document.getElementById('console-output').innerHTML = '<div>Console cleared...</div>';
+        }
+
+        function testDelete(posterId, posterTitle) {
+            log(`=== ULTRA SIMPLE DELETE TEST ===`);
+            log(`Poster ID: ${posterId}`);
+            log(`Poster Title: ${posterTitle}`);
+            
+            if (confirm(`Are you sure you want to delete "${posterTitle}"?`)) {
+                log('User confirmed deletion');
+                log('Redirecting to delete URL...');
+                
+                // Just redirect to delete URL
+                window.location.href = `/poster/${posterId}/delete`;
+                
+            } else {
+                log('User cancelled deletion');
+            }
+        }
+
+        function testDirectRedirect() {
+            log('=== TESTING DIRECT REDIRECT ===');
+            log('Redirecting to delete URL directly...');
+            window.location.href = '/poster/1/delete';
+        }
+
+        // Override console.log to also show in our console
+        const originalLog = console.log;
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            log(args.join(' '));
+        };
+        
+        log('Ultra simple test page loaded successfully');
+        log('Ready to test delete functionality');
+    </script>
+</body>
+</html> 

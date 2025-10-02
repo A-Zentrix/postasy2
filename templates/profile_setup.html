@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block title %}Complete Profile - Postasy{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <h3 class="card-title">
+                        <i class="fas fa-user-edit me-2"></i>Complete Your Profile
+                    </h3>
+                    <p class="text-muted">
+                        Add your business information to automatically include it in your posters
+                    </p>
+                </div>
+                
+                <form method="POST" enctype="multipart/form-data">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="border-bottom pb-2 mb-3">Personal Information</h5>
+                            
+                            <div class="mb-3">
+                                {{ form.full_name.label(class="form-label") }}
+                                {{ form.full_name(class="form-control") }}
+                                {% if form.full_name.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.full_name.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ form.phone.label(class="form-label") }}
+                                {{ form.phone(class="form-control") }}
+                                {% if form.phone.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.phone.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ form.address.label(class="form-label") }}
+                                {{ form.address(class="form-control", rows="3") }}
+                                {% if form.address.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.address.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h5 class="border-bottom pb-2 mb-3">Business Information</h5>
+                            
+                            <div class="mb-3">
+                                {{ form.business_name.label(class="form-label") }}
+                                {{ form.business_name(class="form-control") }}
+                                {% if form.business_name.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.business_name.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ form.logo.label(class="form-label") }}
+                                {{ form.logo(class="form-control") }}
+                                {% if form.logo.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.logo.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Upload your business logo (JPG, PNG)</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ form.website.label(class="form-label") }}
+                                {{ form.website(class="form-control") }}
+                                {% if form.website.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.website.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h5 class="border-bottom pb-2 mb-3 mt-4">Social Media Links</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.facebook.label(class="form-label") }}
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fab fa-facebook text-primary"></i>
+                                    </span>
+                                    {{ form.facebook(class="form-control") }}
+                                </div>
+                                {% if form.facebook.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.facebook.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ form.instagram.label(class="form-label") }}
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fab fa-instagram text-danger"></i>
+                                    </span>
+                                    {{ form.instagram(class="form-control") }}
+                                </div>
+                                {% if form.instagram.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.instagram.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.twitter.label(class="form-label") }}
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fab fa-twitter text-info"></i>
+                                    </span>
+                                    {{ form.twitter(class="form-control") }}
+                                </div>
+                                {% if form.twitter.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.twitter.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ form.linkedin.label(class="form-label") }}
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fab fa-linkedin text-primary"></i>
+                                    </span>
+                                    {{ form.linkedin(class="form-control") }}
+                                </div>
+                                {% if form.linkedin.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.linkedin.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        {{ form.submit(class="btn btn-primary btn-lg px-4") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,1618 @@
+{% extends "base_fastapi.html" %}
+
+{% block title %}Edit Poster - {{ poster.title }} - Postasy{% endblock %}
+
+{% block extra_head %}
+<!-- Fabric.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+<!-- jsPDF for PDF export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+:root {
+    --primary-color: #4A90E2;
+    --primary-hover: #357ABD;
+    --secondary-color: #50E3C2;
+    --background-dark: #2c3e50;
+    --panel-dark: #34495e;
+    --text-light: #ecf0f1;
+    --border-color: #4a6a8a;
+    --success-color: #27ae60;
+    --danger-color: #e74c3c;
+    --warning-color: #f39c12;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.2);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+        body {
+            font-family: var(--font-family-primary, 'Inter', -apple-system, BlinkMacSystemFont, sans-serif);
+            background-color: var(--background-dark);
+            color: var(--text-light);
+            overflow: hidden;
+        }
+
+.editor-container {
+    display: flex;
+    height: 100vh;
+}
+
+/* Left Panel Styling */
+.left-panel {
+    width: 320px;
+    background-color: var(--panel-dark);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    border-right: 2px solid var(--border-color);
+    overflow-y: auto;
+}
+
+.logo-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.logo-header i {
+    font-size: 32px;
+    color: var(--primary-color);
+    margin-right: 12px;
+}
+
+.logo-header h2 {
+    margin: 0;
+    color: var(--text-light);
+    font-size: 24px;
+    font-weight: 700;
+}
+
+/* Main Tools */
+.main-tools {
+    margin-bottom: 30px;
+}
+
+.tool-btn {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 15px 12px;
+    background: none;
+    border: 1px solid transparent;
+    color: var(--text-light);
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.tool-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary-color);
+    transform: translateX(5px);
+}
+
+.tool-btn.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    transform: translateX(5px);
+}
+
+.tool-btn i {
+    margin-right: 15px;
+    width: 20px;
+    font-size: 18px;
+}
+
+.tool-separator {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 15px 0;
+}
+
+/* Collapsible Panels */
+.panel {
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 20px;
+}
+
+.panel-header {
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--text-light);
+    padding: 18px 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.panel-header:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.panel-header.active {
+    background-color: rgba(74, 144, 226, 0.2);
+    color: var(--secondary-color);
+}
+
+.panel-header i:first-child {
+    margin-right: 12px;
+    color: var(--primary-color);
+}
+
+.toggle-icon {
+    transition: transform 0.2s ease;
+}
+
+.panel-header.active .toggle-icon {
+    transform: rotate(180deg);
+}
+
+.panel-content {
+    padding: 0 15px 20px;
+    display: none;
+}
+
+.panel-content.active {
+    display: block;
+}
+
+/* Main Area Styling */
+.main-area {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    background-color: var(--panel-dark);
+    border-bottom: 2px solid var(--border-color);
+    box-shadow: var(--shadow);
+}
+
+.poster-title-container {
+    display: flex;
+    align-items: center;
+}
+
+.poster-title-container i {
+    font-size: 24px;
+    color: var(--primary-color);
+    margin-right: 12px;
+}
+
+.poster-title {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    font-size: 22px;
+    font-weight: bold;
+    min-width: 200px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.poster-title:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+    outline: none;
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    box-shadow: var(--shadow);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.btn-secondary:hover {
+    background-color: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    color: white;
+    box-shadow: var(--shadow);
+}
+
+.btn-success:hover {
+    background-color: #229954;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Canvas & Loading Overlay */
+.canvas-container {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 40px;
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+}
+
+.canvas-wrapper {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    background: white;
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(44, 62, 80, 0.95);
+    backdrop-filter: blur(8px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.loading-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.spinner {
+    border: 6px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 6px solid var(--secondary-color);
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 24px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+#posterCanvas {
+    display: block;
+    border-radius: 12px;
+}
+
+/* Layer Items */
+.layer-item {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.layer-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary-color);
+    transform: translateX(5px);
+}
+
+.layer-item.active {
+    background-color: rgba(74, 144, 226, 0.2);
+    border-color: var(--primary-color);
+    transform: translateX(5px);
+}
+
+.layer-name {
+    font-size: 14px;
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.layer-controls {
+    display: flex;
+    gap: 6px;
+}
+
+.layer-control-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-light);
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.layer-control-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Properties Panel */
+.property-group {
+    margin-bottom: 20px;
+}
+
+.property-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: 8px;
+    display: block;
+}
+
+.property-input, .property-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-light);
+    transition: all 0.2s ease;
+}
+
+.property-input:focus, .property-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.property-row {
+    display: flex;
+    gap: 10px;
+}
+
+.property-row .property-input {
+    flex: 1;
+}
+
+.color-picker {
+    width: 40px;
+    height: 38px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.color-picker:hover {
+    border-color: var(--primary-color);
+}
+
+.range-slider {
+    width: 100%;
+    margin: 12px 0;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    background: var(--border-color);
+    border-radius: 3px;
+    outline: none;
+}
+
+.range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.range-slider::-webkit-slider-thumb:hover {
+    background: var(--primary-hover);
+    transform: scale(1.1);
+}
+
+.range-value {
+    font-size: 12px;
+    color: var(--text-light);
+    text-align: center;
+    margin-top: 6px;
+    font-weight: 600;
+}
+
+/* Export Buttons */
+.export-btn {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    background-color: rgba(74, 144, 226, 0.2);
+    border: 1px solid var(--primary-color);
+    color: var(--text-light);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    gap: 12px;
+}
+
+.export-btn:hover {
+    background-color: rgba(74, 144, 226, 0.3);
+    transform: translateX(5px);
+}
+
+.export-btn i {
+    color: var(--primary-color);
+    font-size: 16px;
+}
+
+/* Controls */
+.canvas-controls {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    gap: 12px;
+    background: rgba(52, 73, 94, 0.9);
+    backdrop-filter: blur(10px);
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.control-btn {
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-light);
+    font-size: 16px;
+    transition: all 0.2s ease;
+}
+
+.control-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.control-btn.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+/* Success/Error Messages */
+.message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: var(--shadow-lg);
+    transition: all 0.3s ease;
+}
+
+.message.success {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.message.error {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .left-panel {
+        width: 280px;
+    }
+    
+    .canvas-container {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .left-panel {
+        position: absolute;
+        left: -100%;
+        width: 280px;
+        height: 100vh;
+        z-index: 40;
+        transition: left 0.3s ease;
+        box-shadow: var(--shadow-lg);
+    }
+    
+    .left-panel.open {
+        left: 0;
+    }
+    
+    .main-header {
+        padding: 15px 20px;
+    }
+    
+    .poster-title {
+        font-size: 18px;
+    }
+    
+    .canvas-container {
+        padding: 16px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="editor-container">
+    <!-- Left Panel: Tools & Controls -->
+    <aside class="left-panel">
+        <div class="logo-header">
+            <i class="fas fa-palette"></i>
+            <h2>Postasy</h2>
+        </div>
+
+        <div class="main-tools">
+            <!-- Basic Tools -->
+            <button class="tool-btn active" id="selectTool" onclick="setTool('select')">
+                <i class="fas fa-mouse-pointer"></i><span>Select</span>
+            </button>
+            <button class="tool-btn" id="textTool" onclick="setTool('text')">
+                <i class="fas fa-font"></i><span>Add Text</span>
+            </button>
+            <button class="tool-btn" onclick="showShapesMenu(this)">
+                <i class="fas fa-shapes"></i><span>Add Shape</span>
+            </button>
+            
+            <div class="tool-separator"></div>
+            
+            <button class="tool-btn" onclick="undoAction()">
+                <i class="fas fa-undo"></i><span>Undo</span>
+            </button>
+            <button class="tool-btn" onclick="redoAction()">
+                <i class="fas fa-redo"></i><span>Redo</span>
+            </button>
+            <button class="tool-btn" onclick="deleteSelected()">
+                <i class="fas fa-trash"></i><span>Delete</span>
+            </button>
+        </div>
+
+        <!-- Collapsible Panels -->
+        <div class="panel-group">
+            <div class="panel">
+                <button class="panel-header" onclick="togglePanel(this)">
+                    <span><i class="fas fa-layer-group"></i> Layers</span>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </button>
+                <div class="panel-content" id="layersPanel">
+                    <!-- Layer items will be dynamically added here -->
+                    <p style="color: var(--text-light); opacity: 0.7; font-size: 14px;">Your layers will appear here.</p>
+                </div>
+            </div>
+
+            <div class="panel">
+                <button class="panel-header" onclick="togglePanel(this)">
+                    <span><i class="fas fa-sliders-h"></i> Properties</span>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </button>
+                <div class="panel-content" id="propertiesPanel">
+                    <p style="color: var(--text-light); opacity: 0.7; font-size: 14px;">Select an object to edit its properties.</p>
+                </div>
+            </div>
+
+            <div class="panel">
+                <button class="panel-header" onclick="togglePanel(this)">
+                    <span><i class="fas fa-file-export"></i> Export</span>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </button>
+                <div class="panel-content">
+                    <button class="export-btn" onclick="exportAs('png')">
+                        <i class="fas fa-file-image"></i>Export as PNG
+                    </button>
+                    <button class="export-btn" onclick="exportAs('jpg')">
+                        <i class="fas fa-file-image"></i>Export as JPG
+                    </button>
+                    <button class="export-btn" onclick="exportAs('pdf')">
+                        <i class="fas fa-file-pdf"></i>Export as PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Right Panel: Main Area -->
+    <main class="main-area">
+        <header class="main-header">
+            <div class="poster-title-container">
+                <i class="fas fa-image"></i>
+                <input type="text" value="{{ poster.title }}" class="poster-title" id="posterTitle">
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="previewPoster()">
+                    <i class="fas fa-eye"></i>Preview
+                </button>
+                <button class="btn btn-success" id="saveBtn" onclick="savePoster()">
+                    <i class="fas fa-save"></i>Save Changes
+                </button>
+                <a href="{{ url_for('poster.gallery') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i>Back to Gallery
+                </a>
+            </div>
+        </header>
+
+        <div class="canvas-container">
+            <div class="canvas-wrapper">
+                <!-- Poster Loading Overlay -->
+                <div class="loading-overlay" id="loadingOverlay">
+                    <div class="spinner"></div>
+                    <p class="loading-text">Loading your poster...</p>
+                </div>
+
+                <!-- The Actual Poster Canvas -->
+                <canvas id="posterCanvas"></canvas>
+            </div>
+
+            <!-- Canvas Controls -->
+            <div class="canvas-controls">
+                <button class="control-btn" onclick="zoomOut()" title="Zoom Out">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button class="control-btn" onclick="fitToScreen()" title="Fit to Screen">
+                    <i class="fas fa-expand-arrows-alt"></i>
+                </button>
+                <button class="control-btn" onclick="zoomIn()" title="Zoom In">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Save Form (Hidden) -->
+<form id="saveForm" method="POST" style="display: none;">
+    <input type="hidden" name="canvas_data" id="canvasData">
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+console.log('🎨 Starting Postasy Editor Enhanced...');
+
+// Global variables
+let canvas = null;
+let history = [];
+let historyStep = 0;
+let currentTool = 'select';
+let zoomLevel = 1;
+let backgroundImage = null;
+
+// Poster data
+const posterData = {
+    id: {{ poster.id }},
+    title: "{{ poster.title }}",
+    filename: "{{ poster.filename }}"
+};
+
+// Wait for DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📐 DOM loaded, initializing enhanced editor...');
+    initializeEditor();
+});
+
+function initializeEditor() {
+    try {
+        console.log('🔧 Setting up enhanced canvas...');
+        
+        // Create canvas with optimal dimensions
+        const canvasWidth = 800;
+        const canvasHeight = 600;
+        
+        canvas = new fabric.Canvas('posterCanvas', {
+            width: canvasWidth,
+            height: canvasHeight,
+            backgroundColor: '#ffffff',
+            preserveObjectStacking: true,
+            selection: true,
+            targetFindTolerance: 5,
+            perPixelTargetFind: true
+        });
+        
+        console.log('✅ Enhanced canvas created:', canvasWidth + 'x' + canvasHeight);
+        
+        // Setup canvas events
+        setupCanvasEvents();
+        
+        // Load the poster image
+        loadPosterImage();
+        
+        // Initialize UI
+        updateToolbar();
+        initializePanels();
+        
+        console.log('🚀 Enhanced editor initialization complete');
+        
+    } catch (error) {
+        console.error('❌ Enhanced editor initialization failed:', error);
+        hideLoading();
+        showMessage('Failed to initialize the editor. Please refresh the page.', 'error');
+    }
+}
+
+function setupCanvasEvents() {
+    console.log('🔗 Setting up enhanced canvas events...');
+    
+    canvas.on('selection:created', handleSelection);
+    canvas.on('selection:updated', handleSelection);
+    canvas.on('selection:cleared', clearSelection);
+    canvas.on('object:modified', saveState);
+    canvas.on('object:added', updateLayers);
+    canvas.on('object:removed', updateLayers);
+    canvas.on('mouse:down', handleCanvasClick);
+    
+    console.log('✅ Enhanced canvas events configured');
+}
+
+function loadPosterImage() {
+    console.log('🖼️ Loading poster image with enhanced error handling...');
+    
+    const imageUrl = '/static/uploads/posters/' + posterData.filename;
+    console.log('📂 Image URL:', imageUrl);
+    
+    // Create test image to verify accessibility
+    const testImg = new Image();
+    
+    testImg.onload = function() {
+        console.log('✅ Test image loaded successfully');
+        console.log('📏 Image dimensions:', testImg.width + 'x' + testImg.height);
+        
+        // Load with Fabric.js
+        fabric.Image.fromURL(imageUrl, function(fabricImg) {
+            if (!fabricImg) {
+                console.error('❌ Failed to create Fabric image');
+                hideLoading();
+                showMessage('Failed to load the poster image.', 'error');
+                return;
+            }
+            
+            console.log('✅ Fabric image created successfully');
+            
+            try {
+                // Calculate optimal scaling
+                const canvasWidth = canvas.getWidth();
+                const canvasHeight = canvas.getHeight();
+                const imgWidth = fabricImg.width;
+                const imgHeight = fabricImg.height;
+                
+                const scaleX = canvasWidth / imgWidth;
+                const scaleY = canvasHeight / imgHeight;
+                const scale = Math.min(scaleX, scaleY, 1);
+                
+                console.log('📐 Calculated scale:', scale);
+                
+                // Configure background image
+                fabricImg.set({
+                    scaleX: scale,
+                    scaleY: scale,
+                    left: (canvasWidth - imgWidth * scale) / 2,
+                    top: (canvasHeight - imgHeight * scale) / 2,
+                    selectable: false,
+                    evented: false,
+                    name: 'background-image',
+                    lockMovementX: true,
+                    lockMovementY: true,
+                    lockRotation: true,
+                    lockScalingX: true,
+                    lockScalingY: true,
+                    hoverCursor: 'default',
+                    moveCursor: 'default'
+                });
+                
+                // Clear canvas and add background
+                canvas.clear();
+                canvas.add(fabricImg);
+                canvas.sendToBack(fabricImg);
+                canvas.renderAll();
+                
+                // Store reference
+                backgroundImage = fabricImg;
+                
+                // Save initial state
+                saveState();
+                updateLayers();
+                
+                // Hide loading with smooth animation
+                setTimeout(() => {
+                    hideLoading();
+                    showMessage('Poster loaded successfully!', 'success');
+                    console.log('🎉 Enhanced poster loaded and editor ready!');
+                }, 500);
+                
+            } catch (error) {
+                console.error('❌ Error configuring image:', error);
+                hideLoading();
+                showMessage('Error setting up the poster image.', 'error');
+            }
+            
+        }, {
+            crossOrigin: 'anonymous'
+        });
+    };
+    
+    testImg.onerror = function(e) {
+        console.error('❌ Failed to load test image:', imageUrl, e);
+        hideLoading();
+        showMessage('The poster image could not be found. Please check if the image exists.', 'error');
+    };
+    
+    // Set loading timeout
+    setTimeout(() => {
+        const overlay = document.getElementById('loadingOverlay');
+        if (overlay && !overlay.classList.contains('hidden')) {
+            console.error('⏰ Image loading timeout');
+            hideLoading();
+            showMessage('Image loading timed out. Please check your connection.', 'error');
+        }
+    }, 15000);
+    
+    testImg.src = imageUrl;
+}
+
+function hideLoading() {
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) {
+        loadingOverlay.classList.add('hidden');
+    }
+}
+
+function showMessage(message, type = 'success') {
+    // Remove existing messages
+    const existingMessages = document.querySelectorAll('.message');
+    existingMessages.forEach(msg => msg.remove());
+    
+    // Create new message
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${type}`;
+    messageDiv.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check' : 'exclamation-triangle'}"></i>
+        ${message}
+    `;
+    
+    document.body.appendChild(messageDiv);
+    
+    // Auto-remove after delay
+    setTimeout(() => {
+        messageDiv.remove();
+    }, 5000);
+}
+
+// Panel management
+function initializePanels() {
+    // Open the first panel by default
+    const firstPanel = document.querySelector('.panel-header');
+    if (firstPanel) {
+        togglePanel(firstPanel);
+    }
+}
+
+function togglePanel(header) {
+    const content = header.nextElementSibling;
+    const icon = header.querySelector('.toggle-icon');
+    
+    // Toggle content
+    if (content.classList.contains('active')) {
+        content.classList.remove('active');
+        content.style.display = 'none';
+        header.classList.remove('active');
+        icon.classList.remove('fa-chevron-up');
+        icon.classList.add('fa-chevron-down');
+    } else {
+        content.classList.add('active');
+        content.style.display = 'block';
+        header.classList.add('active');
+        icon.classList.remove('fa-chevron-down');
+        icon.classList.add('fa-chevron-up');
+    }
+}
+
+// Tool management
+function setTool(tool) {
+    currentTool = tool;
+    updateToolbar();
+    
+    // Configure canvas for the tool
+    switch(tool) {
+        case 'select':
+            canvas.isDrawingMode = false;
+            canvas.selection = true;
+            canvas.defaultCursor = 'default';
+            break;
+        case 'text':
+            canvas.isDrawingMode = false;
+            canvas.selection = false;
+            canvas.defaultCursor = 'text';
+            break;
+        default:
+            canvas.isDrawingMode = false;
+            canvas.selection = false;
+            canvas.defaultCursor = 'crosshair';
+    }
+    
+    canvas.renderAll();
+}
+
+function updateToolbar() {
+    // Update active tool button
+    document.querySelectorAll('.tool-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    const toolBtn = document.getElementById(currentTool + 'Tool');
+    if (toolBtn) {
+        toolBtn.classList.add('active');
+    }
+}
+
+function handleCanvasClick(options) {
+    if (currentTool === 'text') {
+        const pointer = canvas.getPointer(options.e);
+        addText(pointer.x, pointer.y);
+    }
+}
+
+// Object creation functions
+function addText(x, y) {
+    const text = new fabric.Textbox('Click to edit text', {
+        left: x - 75,
+        top: y - 15,
+        width: 200,
+        fontSize: 32,
+        fill: '#4A90E2',
+        fontFamily: 'Arial',
+        fontWeight: '600',
+        name: 'text-' + Date.now(),
+        cornerStyle: 'circle',
+        borderColor: '#4A90E2',
+        cornerColor: '#4A90E2'
+    });
+    
+    canvas.add(text);
+    canvas.setActiveObject(text);
+    setTool('select');
+    saveState();
+}
+
+function addRectangle() {
+    const rect = new fabric.Rect({
+        left: 100,
+        top: 100,
+        width: 150,
+        height: 100,
+        fill: '#4A90E2',
+        stroke: '#357ABD',
+        strokeWidth: 2,
+        rx: 10,
+        ry: 10,
+        name: 'rectangle-' + Date.now(),
+        cornerStyle: 'circle',
+        borderColor: '#4A90E2',
+        cornerColor: '#4A90E2'
+    });
+    
+    canvas.add(rect);
+    canvas.setActiveObject(rect);
+    saveState();
+}
+
+function addCircle() {
+    const circle = new fabric.Circle({
+        left: 100,
+        top: 100,
+        radius: 60,
+        fill: '#50E3C2',
+        stroke: '#4A90E2',
+        strokeWidth: 2,
+        name: 'circle-' + Date.now(),
+        cornerStyle: 'circle',
+        borderColor: '#4A90E2',
+        cornerColor: '#4A90E2'
+    });
+    
+    canvas.add(circle);
+    canvas.setActiveObject(circle);
+    saveState();
+}
+
+// Shape menu
+function showShapesMenu(btn) {
+    const menu = document.createElement('div');
+    menu.style.cssText = `
+        position: absolute;
+        background: var(--panel-dark);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        box-shadow: var(--shadow-lg);
+        padding: 12px;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-width: 150px;
+    `;
+    
+    const shapes = [
+        { icon: 'fas fa-square', action: 'addRectangle', title: 'Rectangle' },
+        { icon: 'fas fa-circle', action: 'addCircle', title: 'Circle' }
+    ];
+    
+    shapes.forEach(shape => {
+        const shapeBtn = document.createElement('button');
+        shapeBtn.className = 'tool-btn';
+        shapeBtn.innerHTML = `<i class="${shape.icon}"></i><span>${shape.title}</span>`;
+        shapeBtn.onclick = function() {
+            window[shape.action]();
+            document.body.removeChild(menu);
+        };
+        menu.appendChild(shapeBtn);
+    });
+    
+    const rect = btn.getBoundingClientRect();
+    menu.style.left = (rect.right + 10) + 'px';
+    menu.style.top = rect.top + 'px';
+    
+    document.body.appendChild(menu);
+    
+    // Remove menu when clicking outside
+    setTimeout(() => {
+        document.addEventListener('click', function removeMenu(e) {
+            if (!menu.contains(e.target) && e.target !== btn) {
+                if (document.body.contains(menu)) {
+                    document.body.removeChild(menu);
+                }
+                document.removeEventListener('click', removeMenu);
+            }
+        });
+    }, 10);
+}
+
+// Layer management
+function updateLayers() {
+    const layersPanel = document.getElementById('layersPanel');
+    const objects = canvas.getObjects().slice().reverse();
+    
+    let html = '';
+    objects.forEach((obj, index) => {
+        const actualIndex = objects.length - index - 1;
+        const name = obj.name || obj.type + ' ' + (actualIndex + 1);
+        const isSelected = canvas.getActiveObject() === obj;
+        const isVisible = obj.visible !== false;
+        
+        html += `
+            <div class="layer-item ${isSelected ? 'active' : ''}" onclick="selectLayer(${actualIndex})">
+                <div class="layer-name">${name}</div>
+                <div class="layer-controls">
+                    <button class="layer-control-btn" onclick="event.stopPropagation(); toggleLayerVisibility(${actualIndex})" title="Toggle Visibility">
+                        <i class="fas fa-eye${isVisible ? '' : '-slash'}"></i>
+                    </button>
+                    ${obj.name !== 'background-image' ? `<button class="layer-control-btn" onclick="event.stopPropagation(); deleteLayer(${actualIndex})" title="Delete Layer">
+                        <i class="fas fa-trash"></i>
+                    </button>` : ''}
+                </div>
+            </div>
+        `;
+    });
+    
+    layersPanel.innerHTML = html || '<p style="color: var(--text-light); opacity: 0.7; font-size: 14px;">No layers</p>';
+}
+
+function selectLayer(index) {
+    const objects = canvas.getObjects();
+    const obj = objects[index];
+    if (obj) {
+        canvas.setActiveObject(obj);
+        canvas.renderAll();
+    }
+}
+
+function toggleLayerVisibility(index) {
+    const objects = canvas.getObjects();
+    const obj = objects[index];
+    if (obj) {
+        obj.set('visible', !obj.visible);
+        canvas.renderAll();
+        updateLayers();
+    }
+}
+
+function deleteLayer(index) {
+    const objects = canvas.getObjects();
+    const obj = objects[index];
+    if (obj && obj.name !== 'background-image') {
+        canvas.remove(obj);
+        saveState();
+    }
+}
+
+// Selection handling
+function handleSelection() {
+    updatePropertiesPanel();
+    updateLayers();
+}
+
+function clearSelection() {
+    clearPropertiesPanel();
+    updateLayers();
+}
+
+// Properties panel
+function updatePropertiesPanel() {
+    const activeObject = canvas.getActiveObject();
+    const panel = document.getElementById('propertiesPanel');
+    
+    if (!activeObject || activeObject.name === 'background-image') {
+        clearPropertiesPanel();
+        return;
+    }
+    
+    let html = '';
+    
+    // Position properties
+    html += `
+        <div class="property-group">
+            <label class="property-label">Position</label>
+            <div class="property-row">
+                <input type="number" class="property-input" placeholder="X" value="${Math.round(activeObject.left)}" onchange="updateObjectProperty('left', this.value)">
+                <input type="number" class="property-input" placeholder="Y" value="${Math.round(activeObject.top)}" onchange="updateObjectProperty('top', this.value)">
+            </div>
+        </div>
+    `;
+    
+    // Size properties
+    if (activeObject.type !== 'line') {
+        html += `
+            <div class="property-group">
+                <label class="property-label">Size</label>
+                <div class="property-row">
+                    <input type="number" class="property-input" placeholder="Width" value="${Math.round(activeObject.getScaledWidth())}" onchange="updateObjectSize('width', this.value)">
+                    <input type="number" class="property-input" placeholder="Height" value="${Math.round(activeObject.getScaledHeight())}" onchange="updateObjectSize('height', this.value)">
+                </div>
+            </div>
+        `;
+    }
+    
+    // Rotation
+    html += `
+        <div class="property-group">
+            <label class="property-label">Rotation</label>
+            <input type="range" class="range-slider" min="0" max="360" value="${activeObject.angle || 0}" oninput="updateObjectProperty('angle', this.value); updateRangeValue('rotation', this.value + '°')">
+            <div class="range-value" id="rotationValue">${Math.round(activeObject.angle || 0)}°</div>
+        </div>
+    `;
+    
+    // Opacity
+    html += `
+        <div class="property-group">
+            <label class="property-label">Opacity</label>
+            <input type="range" class="range-slider" min="0" max="1" step="0.1" value="${activeObject.opacity || 1}" oninput="updateObjectProperty('opacity', this.value); updateRangeValue('opacity', Math.round(this.value * 100) + '%')">
+            <div class="range-value" id="opacityValue">${Math.round((activeObject.opacity || 1) * 100)}%</div>
+        </div>
+    `;
+    
+    // Text-specific properties
+    if (activeObject.type === 'textbox' || activeObject.type === 'text') {
+        html += `
+            <div class="property-group">
+                <label class="property-label">Font Size</label>
+                <input type="number" class="property-input" value="${activeObject.fontSize}" onchange="updateObjectProperty('fontSize', this.value)">
+            </div>
+            <div class="property-group">
+                <label class="property-label">Font Family</label>
+                <select class="property-select" onchange="updateObjectProperty('fontFamily', this.value)">
+                    <option value="Arial" ${activeObject.fontFamily === 'Arial' ? 'selected' : ''}>Arial</option>
+                    <option value="Times New Roman" ${activeObject.fontFamily === 'Times New Roman' ? 'selected' : ''}>Times New Roman</option>
+                    <option value="Helvetica" ${activeObject.fontFamily === 'Helvetica' ? 'selected' : ''}>Helvetica</option>
+                    <option value="Georgia" ${activeObject.fontFamily === 'Georgia' ? 'selected' : ''}>Georgia</option>
+                    <option value="Roboto" ${activeObject.fontFamily === 'Roboto' ? 'selected' : ''}>Roboto</option>
+                </select>
+            </div>
+            <div class="property-group">
+                <label class="property-label">Text Color</label>
+                <input type="color" class="color-picker" value="${activeObject.fill}" onchange="updateObjectProperty('fill', this.value)">
+            </div>
+        `;
+    }
+    
+    // Shape-specific properties
+    if (activeObject.type === 'rect' || activeObject.type === 'circle') {
+        html += `
+            <div class="property-group">
+                <label class="property-label">Fill Color</label>
+                <input type="color" class="color-picker" value="${activeObject.fill}" onchange="updateObjectProperty('fill', this.value)">
+            </div>
+            <div class="property-group">
+                <label class="property-label">Stroke Color</label>
+                <input type="color" class="color-picker" value="${activeObject.stroke || '#000000'}" onchange="updateObjectProperty('stroke', this.value)">
+            </div>
+            <div class="property-group">
+                <label class="property-label">Stroke Width</label>
+                <input type="number" class="property-input" value="${activeObject.strokeWidth || 0}" onchange="updateObjectProperty('strokeWidth', this.value)">
+            </div>
+        `;
+    }
+    
+    panel.innerHTML = html;
+}
+
+function clearPropertiesPanel() {
+    document.getElementById('propertiesPanel').innerHTML = '<p style="color: var(--text-light); opacity: 0.7; font-size: 14px;">Select an object to edit its properties.</p>';
+}
+
+function updateObjectProperty(property, value) {
+    const activeObject = canvas.getActiveObject();
+    if (!activeObject) return;
+    
+    const numValue = parseFloat(value);
+    activeObject.set(property, isNaN(numValue) ? value : numValue);
+    canvas.renderAll();
+    saveState();
+}
+
+function updateObjectSize(dimension, value) {
+    const activeObject = canvas.getActiveObject();
+    if (!activeObject) return;
+    
+    const currentScale = dimension === 'width' ? activeObject.scaleX : activeObject.scaleY;
+    const currentSize = dimension === 'width' ? activeObject.width : activeObject.height;
+    const newScale = parseFloat(value) / currentSize;
+    
+    if (dimension === 'width') {
+        activeObject.set('scaleX', newScale);
+    } else {
+        activeObject.set('scaleY', newScale);
+    }
+    
+    canvas.renderAll();
+    saveState();
+}
+
+function updateRangeValue(id, value) {
+    const element = document.getElementById(id + 'Value');
+    if (element) {
+        element.textContent = value;
+    }
+}
+
+// Action functions
+function deleteSelected() {
+    const activeObjects = canvas.getActiveObjects();
+    if (activeObjects.length) {
+        const filteredObjects = activeObjects.filter(obj => obj.name !== 'background-image');
+        if (filteredObjects.length > 0) {
+            canvas.remove(...filteredObjects);
+            canvas.discardActiveObject();
+            saveState();
+        }
+    }
+}
+
+function duplicateSelected() {
+    const activeObject = canvas.getActiveObject();
+    if (activeObject && activeObject.name !== 'background-image') {
+        activeObject.clone(function(cloned) {
+            cloned.set({
+                left: cloned.left + 20,
+                top: cloned.top + 20,
+                name: activeObject.name.replace(/\d+$/, '') + Date.now()
+            });
+            canvas.add(cloned);
+            canvas.setActiveObject(cloned);
+            saveState();
+        });
+    }
+}
+
+function bringToFront() {
+    const activeObject = canvas.getActiveObject();
+    if (activeObject && activeObject.name !== 'background-image') {
+        canvas.bringToFront(activeObject);
+        if (backgroundImage) canvas.sendToBack(backgroundImage);
+        saveState();
+    }
+}
+
+function sendToBack() {
+    const activeObject = canvas.getActiveObject();
+    if (activeObject && activeObject.name !== 'background-image') {
+        canvas.sendToBack(activeObject);
+        if (backgroundImage) canvas.sendToBack(backgroundImage);
+        saveState();
+    }
+}
+
+// Alignment functions
+function alignLeft() {
+    const activeObject = canvas.getActiveObject();
+    if (activeObject && activeObject.name !== 'background-image') {
+        activeObject.set('left', 50);
+        canvas.renderAll();
+        saveState();
+    }
+}
+
+function alignCenter() {
+    const activeObject = canvas.getActiveObject();
+    if (activeObject && activeObject.name !== 'background-image') {
+        activeObject.set('left', (canvas.width - activeObject.getScaledWidth()) / 2);
+        canvas.renderAll();
+        saveState();
+    }
+}
+
+function alignRight() {
+    const activeObject = canvas.getActiveObject();
+    if (activeObject && activeObject.name !== 'background-image') {
+        activeObject.set('left', canvas.width - activeObject.getScaledWidth() - 50);
+        canvas.renderAll();
+        saveState();
+    }
+}
+
+// History management
+function saveState() {
+    if (!canvas) return;
+    
+    if (historyStep < history.length - 1) {
+        history = history.slice(0, historyStep + 1);
+    }
+    
+    const state = JSON.stringify(canvas.toJSON());
+    history.push(state);
+    historyStep = history.length - 1;
+    
+    // Limit history size
+    if (history.length > 50) {
+        history.shift();
+        historyStep--;
+    }
+}
+
+function undoAction() {
+    if (historyStep > 0) {
+        historyStep--;
+        const state = history[historyStep];
+        canvas.loadFromJSON(state, function() {
+            canvas.renderAll();
+            updateLayers();
+            updatePropertiesPanel();
+            backgroundImage = canvas.getObjects().find(obj => obj.name === 'background-image');
+        });
+    }
+}
+
+function redoAction() {
+    if (historyStep < history.length - 1) {
+        historyStep++;
+        const state = history[historyStep];
+        canvas.loadFromJSON(state, function() {
+            canvas.renderAll();
+            updateLayers();
+            updatePropertiesPanel();
+            backgroundImage = canvas.getObjects().find(obj => obj.name === 'background-image');
+        });
+    }
+}
+
+// Zoom functions
+function zoomIn() {
+    zoomLevel = Math.min(zoomLevel * 1.2, 5);
+    canvas.setZoom(zoomLevel);
+}
+
+function zoomOut() {
+    zoomLevel = Math.max(zoomLevel / 1.2, 0.1);
+    canvas.setZoom(zoomLevel);
+}
+
+function fitToScreen() {
+    zoomLevel = 1;
+    canvas.setZoom(zoomLevel);
+    canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+}
+
+// Export functions
+function exportAs(format) {
+    try {
+        if (!canvas) {
+            showMessage('Canvas not initialized', 'error');
+            return;
+        }
+        
+        const dataURL = canvas.toDataURL({
+            format: format === 'jpg' ? 'jpeg' : format,
+            quality: 0.95,
+            multiplier: 2
+        });
+        
+        if (format === 'pdf') {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({
+                orientation: canvas.width > canvas.height ? 'landscape' : 'portrait',
+                unit: 'px',
+                format: [canvas.width, canvas.height]
+            });
+            
+            pdf.addImage(dataURL, 'PNG', 0, 0, canvas.width, canvas.height);
+            pdf.save(`${posterData.title || 'poster'}.pdf`);
+        } else {
+            const link = document.createElement('a');
+            link.download = `${posterData.title || 'poster'}.${format}`;
+            link.href = dataURL;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        showMessage(`Successfully exported as ${format.toUpperCase()}!`, 'success');
+        
+    } catch (error) {
+        console.error('Export error:', error);
+        showMessage('Failed to export image. Please try again.', 'error');
+    }
+}
+
+// Save poster
+function savePoster() {
+    try {
+        if (!canvas || canvas.getObjects().length === 0) {
+            showMessage('Canvas is empty. Please add some content before saving.', 'error');
+            return;
+        }
+        
+        const saveBtn = document.getElementById('saveBtn');
+        const originalText = saveBtn.innerHTML;
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>Saving...';
+        saveBtn.disabled = true;
+        
+        const dataURL = canvas.toDataURL('image/png', 1.0);
+        
+        if (!dataURL || dataURL.length < 100) {
+            throw new Error('Generated image data is invalid');
+        }
+        
+        document.getElementById('canvasData').value = dataURL;
+        document.getElementById('saveForm').submit();
+        
+        showMessage('Poster saved successfully!', 'success');
+        
+    } catch (error) {
+        console.error('Save error:', error);
+        showMessage('Failed to save poster. Please try again.', 'error');
+        
+        const saveBtn = document.getElementById('saveBtn');
+        saveBtn.innerHTML = '<i class="fas fa-save"></i>Save Changes';
+        saveBtn.disabled = false;
+    }
+}
+
+function previewPoster() {
+    window.open('{{ url_for("poster.view", poster_id=poster.id) }}', '_blank');
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+        return;
+    }
+    
+    if (e.ctrlKey || e.metaKey) {
+        switch(e.key) {
+            case 'z':
+                e.preventDefault();
+                if (e.shiftKey) {
+                    redoAction();
+                } else {
+                    undoAction();
+                }
+                break;
+            case 's':
+                e.preventDefault();
+                savePoster();
+                break;
+            case 'd':
+                e.preventDefault();
+                duplicateSelected();
+                break;
+        }
+    }
+    
+    if (e.key === 'Delete' || e.key === 'Backspace') {
+        e.preventDefault();
+        deleteSelected();
+    }
+});
+
+// Responsive handling
+window.addEventListener('resize', function() {
+    if (canvas) {
+        canvas.renderAll();
+    }
+});
+
+console.log('🎨 Postasy Enhanced Editor script loaded and ready!');
+</script>
+{% endblock %}

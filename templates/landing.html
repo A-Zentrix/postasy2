@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Design stunning posters with Postasy – elegant, AI-powered." />
+  <title>Postasy - AI Poster Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://i.postimg.cc/R0hZ9nwc/Whats-App-Image-2025-08-09-at-18-36-30-5b9a0a3d.jpg">
+    <style>
+        :root {
+      --primary: #3a6baf;
+      --primary-deep: #184280;
+      --surface: #ffffff;
+      --surface-soft: #f7f9fd;
+      --text: #0f172a;
+      --muted: #6b7280;
+      --shadow: 0 20px 40px rgba(24,66,128,.10);
+      --ring: 0 0 0 8px rgba(58,107,175,.08);
+    }
+    body { background: #ffffff; color: var(--text); font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    .hero { position: relative; background: radial-gradient(1200px 600px at 80% -10%, rgba(58,107,175,.10), transparent 60%), radial-gradient(900px 500px at -10% 20%, rgba(24,66,128,.08), transparent 60%), #ffffff; padding: 120px 0 80px; overflow: hidden; }
+    .badge-soft { background: rgba(58,107,175,.10); color: var(--primary); font-weight: 600; border-radius: 999px; padding: 8px 14px; }
+    .hero-title { font-family: var(--font-family-primary, 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif); font-size: clamp(40px, 6vw, 64px); line-height: 1.05; letter-spacing: -0.02em; }
+    .hero-lead { font-size: clamp(16px, 2.2vw, 18px); color: var(--muted); }
+    .btn-primary-brand { background: linear-gradient(135deg, var(--primary-deep), var(--primary)); border: none; box-shadow: var(--shadow); color: #fff; }
+    .btn-primary-brand:hover { filter: brightness(1.05); box-shadow: 0 24px 48px rgba(24,66,128,.15); color: #fff; }
+    .btn-outline-brand { border-color: var(--primary); color: var(--primary); background: transparent; }
+    .btn-outline-brand:hover { background: var(--primary); color: #fff; }
+
+    .feature-card { background: var(--surface); border: 1px solid rgba(24,66,128,.10); border-radius: 16px; box-shadow: var(--shadow); padding: 24px; height: 100%; transition: transform .2s ease, box-shadow .2s ease; }
+    .feature-card:hover { transform: translateY(-4px); box-shadow: 0 24px 48px rgba(24,66,128,.12); }
+    .feature-icon { width: 56px; height: 56px; border-radius: 12px; display: grid; place-items: center; background: linear-gradient(135deg, rgba(24,66,128,.12), rgba(58,107,175,.18)); color: var(--primary); font-size: 22px; }
+
+    /* Brand logo sizing */
+    .brand-logo { height: 50px; width:auto; object-fit: contain; }
+    @media (max-width: 576px) { .brand-logo { height: 32px; } }
+
+    .section-muted { background: var(--surface-soft); }
+    .section-title { font-family: var(--font-family-primary, 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif); font-weight: 800; position: relative; display: inline-block; }
+    .section-title::after { content: ""; position: absolute; left: 0; bottom: -8px; width: 60%; height: 4px; background: linear-gradient(90deg, var(--primary-deep), var(--primary)); border-radius: 999px; opacity: .2; }
+
+    .navbar-lightglass { background: rgba(255,255,255,.75); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(24,66,128,.10); }
+    .navbar-lightglass .nav-link { color: #1f2937; }
+    .navbar-lightglass .nav-link:hover { color: var(--primary); }
+
+    /* Decorative animated orbs */
+    .orb { position: absolute; border-radius: 50%; filter: blur(12px); opacity: .35; animation: float 8s ease-in-out infinite; }
+    .orb-1 { width: 180px; height: 180px; right: -40px; top: -40px; background: radial-gradient(circle, rgba(58,107,175,.45), transparent 60%); animation-delay: .2s; }
+    .orb-2 { width: 140px; height: 140px; left: -30px; bottom: -30px; background: radial-gradient(circle, rgba(24,66,128,.45), transparent 60%); animation-delay: .6s; }
+    @keyframes float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-14px) } }
+
+    /* Metrics */
+    .stat-card { background: var(--surface); border: 1px solid rgba(24,66,128,.10); border-radius: 16px; padding: 24px; text-align: center; box-shadow: var(--shadow); }
+    .stat-number { font-family: var(--font-family-primary, 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif); font-size: clamp(28px, 4vw, 40px); font-weight: 800; background: linear-gradient(135deg, var(--primary-deep), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .stat-label { color: var(--muted); font-weight: 500; }
+
+    /* Gallery thumbs */
+    .template-thumb { border-radius: 16px; overflow: hidden; border: 1px solid rgba(24,66,128,.12); box-shadow: var(--shadow); transform-style: preserve-3d; transition: transform .25s ease, box-shadow .25s ease; }
+    .template-thumb img { display: block; width: 100%; height: auto; }
+    .template-thumb:hover { transform: translateY(-6px) rotateX(2deg) rotateY(-2deg); box-shadow: 0 28px 56px rgba(24,66,128,.16); }
+
+    /* Scroll reveal */
+    .reveal { opacity: 0; transform: translateY(16px); }
+    .reveal.revealed { opacity: 1; transform: translateY(0); transition: opacity .6s ease, transform .6s ease; }
+
+    /* CTA band */
+    .cta-band { background: linear-gradient(135deg, rgba(24,66,128,.06), rgba(58,107,175,.08)); border: 1px solid rgba(24,66,128,.12); border-radius: 18px; padding: 28px; box-shadow: var(--shadow); }
+    </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg sticky-top navbar-lightglass py-3">
+        <div class="container">
+      <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/" style="color:var(--primary)">
+        
+        <img src="/static/uploads/logos/image.png" alt="Postasy" class="brand-logo"/>
+        
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+      <div class="collapse navbar-collapse" id="nav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
+          <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+          <li class="nav-item"><a class="nav-link" href="#solutions">Solutions</a></li>
+          <li class="nav-item"><a class="nav-link" href="#pricing">Pricing</a></li>
+          <li class="nav-item ms-lg-2 mt-2 mt-lg-0"><a class="btn btn-sm btn-outline-brand" href="/auth/login">Sign in</a></li>
+          <li class="nav-item mt-2 mt-lg-0"><a class="btn btn-sm btn-primary-brand" href="/auth/register">Get Started</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+  <header class="hero">
+    <span class="orb orb-1"></span>
+    <span class="orb orb-2"></span>
+        <div class="container">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-6">
+          <div class="badge-soft mb-3">Stylish AI Poster Maker</div>
+          <h1 class="hero-title mb-3 reveal">Elegant posters, designed in seconds with Postasy.</h1>
+          <p class="hero-lead mb-4 reveal">Use AI to generate premium layouts, modern typography, and brand‑ready visuals. Built with a refined blue palette for a timeless aesthetic.</p>
+          <div class="d-flex gap-3 reveal">
+            <a class="btn btn-lg btn-primary-brand px-4" href="/auth/register"><i class="fa-solid fa-rocket me-2"></i>Start Free</a>
+            <a class="btn btn-lg btn-outline-brand px-4" href="#features">Explore Features</a>
+                    </div>
+                        </div>
+                <div class="col-lg-6">
+          <div class="feature-card p-0 overflow-hidden reveal">
+            <img src="/static/uploads/posters/poster_a2298775-fe9f-456b-a713-0ecc880a9fc3.png" alt="Poster preview" class="w-100" />
+                        </div>
+                        </div>
+                    </div>
+        </div>
+  </header>
+
+  <section id="features" class="py-5 section-muted">
+    <div class="container py-2">
+      <div class="text-center mb-4">
+        <h2 class="section-title">Why Postasy</h2>
+        <p class="text-muted">A modern, white interface with sophisticated blue accents.</p>
+                </div>
+            <div class="row g-4">
+        <div class="col-md-4"><div class="feature-card reveal"><div class="feature-icon mb-3"><i class="fa-solid fa-wand-magic-sparkles"></i></div><h5 class="fw-semibold">AI Layouts</h5><p class="text-muted mb-0">Instant, elegant poster compositions tuned to your brand palette.</p></div></div>
+        <div class="col-md-4"><div class="feature-card reveal"><div class="feature-icon mb-3"><i class="fa-solid fa-layer-group"></i></div><h5 class="fw-semibold">Smart Elements</h5><p class="text-muted mb-0">Curated typography, shapes, and components with tasteful defaults.</p></div></div>
+        <div class="col-md-4"><div class="feature-card reveal"><div class="feature-icon mb-3"><i class="fa-solid fa-cloud-arrow-down"></i></div><h5 class="fw-semibold">Export Ready</h5><p class="text-muted mb-0">High‑resolution PNG/JPG with clean margins and perfect contrast.</p></div></div>
+                        </div>
+                            </div>
+  </section>
+
+  <!-- Metrics Section -->
+  <section id="metrics" class="py-5">
+    <div class="container py-2">
+      <div class="row g-4">
+        <div class="col-6 col-lg-3"><div class="stat-card reveal"><div class="stat-number" data-target="12000">0</div><div class="stat-label">Posters generated</div></div></div>
+        <div class="col-6 col-lg-3"><div class="stat-card reveal"><div class="stat-number" data-target="540">0</div><div class="stat-label">Brands served</div></div></div>
+        <div class="col-6 col-lg-3"><div class="stat-card reveal"><div class="stat-number" data-target="75">0</div><div class="stat-label">Premium templates</div></div></div>
+        <div class="col-6 col-lg-3"><div class="stat-card reveal"><div class="stat-number" data-target="24">0</div><div class="stat-label">Support hours</div></div></div>
+                </div>
+                    </div>
+  </section>
+
+  <section id="solutions" class="py-5">
+    <div class="container py-2">
+      <div class="row g-4 align-items-center">
+        <div class="col-lg-6 order-lg-2">
+          <div class="feature-card p-0 overflow-hidden reveal">
+            <img src="/static/uploads/posters/poster_fd19b556-d532-4d49-b957-12c7103410ff.png" alt="Editor preview" class="w-100" />
+                    </div>
+                </div>
+        <div class="col-lg-6">
+          <h2 class="section-title mb-3">Designed for brands that value polish</h2>
+          <p class="text-muted">Built around #184280 and #3a6baf, Postasy delivers a refined experience that feels premium and effortless.</p>
+          <ul class="list-unstyled text-muted">
+            <li class="mb-1"><i class="fa-solid fa-check text-primary me-2" style="color:var(--primary)"></i>Clean white surfaces</li>
+            <li class="mb-1"><i class="fa-solid fa-check text-primary me-2" style="color:var(--primary)"></i>Soft shadows and glass accents</li>
+            <li class="mb-1"><i class="fa-solid fa-check text-primary me-2" style="color:var(--primary)"></i>Modern, responsive layout</li>
+          </ul>
+          <a class="btn btn-primary-brand mt-2" href="/poster/generate">Try the Generator</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+  <section id="pricing" class="py-5 section-muted">
+    <div class="container py-2">
+      <div class="text-center mb-4">
+        <h2 class="section-title">Plans that scale with you</h2>
+        <p class="text-muted">Choose the plan that fits your workflow. Prices in INR.</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+          <div class="feature-card h-100 reveal text-start">
+            <h6 class="text-uppercase text-muted mb-1">Free Plan</h6>
+            <h4 class="fw-bold mb-2">₹0</h4>
+            <ul class="text-muted small mb-3 ps-3">
+              <li>10 Templates/month</li>
+              <li>Watermarked downloads</li>
+              <li>No AI features</li>
+              <li>No Scheduling</li>
+            </ul>
+            <p class="small text-muted mb-3">Purpose: Hook the user, make them crave brand personalization & automation.</p>
+            <a class="btn btn-outline-brand w-100" href="/auth/register">Get Started</a>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+          <div class="feature-card h-100 reveal text-start">
+            <h6 class="text-uppercase text-muted mb-1">Starter</h6>
+            <h4 class="fw-bold mb-2">₹99<span class="text-muted small">/month</span></h4>
+            <ul class="text-muted small mb-3 ps-3">
+              <li>50 Templates/month</li>
+              <li>Remove watermark</li>
+              <li>Scheduler (5 posts/week)</li>
+              <li>Pre-made trending templates</li>
+            </ul>
+            <p class="small text-muted mb-3">Hook: “Cheaper than a chai date” — Perfect for students, solo creators</p>
+            <a class="btn btn-primary-brand w-100" href="{{ url_for('payment.plans') }}">Choose Starter</a>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+          <div class="feature-card h-100 reveal text-start" style="outline: var(--ring);">
+            <h6 class="text-uppercase text-muted mb-1">Pro</h6>
+            <h4 class="fw-bold mb-2">₹399<span class="text-muted small">/month</span></h4>
+            <ul class="text-muted small mb-3 ps-3">
+              <li>Unlimited Templates</li>
+              <li>AI Brand Assistant</li>
+              <li>AI Captions + Hashtags</li>
+              <li>Scheduler (Unlimited)</li>
+              <li>Instagram Performance Dashboard</li>
+            </ul>
+            <p class="small text-muted mb-3">Target: Small businesses, freelancers, creators. Position: “One post = ₹300 ROI? Just one client pays your subscription.”</p>
+            <a class="btn btn-primary-brand w-100" href="{{ url_for('payment.plans') }}">Choose Pro</a>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+          <div class="feature-card h-100 reveal text-start">
+            <h6 class="text-uppercase text-muted mb-1">Agency</h6>
+            <h4 class="fw-bold mb-2">₹999<span class="text-muted small">/month</span></h4>
+            <ul class="text-muted small mb-3 ps-3">
+              <li>Everything in Pro</li>
+              <li>5 Client Accounts</li>
+              <li>Approval Workflow</li>
+              <li>White-label reports</li>
+              <li>API Access</li>
+            </ul>
+            <p class="small text-muted mb-3">Target: Freelancers, agencies, SMMAs. Hook: “Handle 5 clients? That’s ₹15,000 revenue minimum. You pay just ₹999.”</p>
+            <a class="btn btn-outline-brand w-100" href="{{ url_for('payment.plans') }}">Choose Agency</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="usecases" class="py-5">
+    <div class="container py-2">
+      <div class="text-center mb-4">
+        <h2 class="section-title">Built for many uses</h2>
+        <p class="text-muted">From marketing teams to creators and events.</p>
+                    </div>
+      <div class="row g-4">
+        <div class="col-md-4"><div class="feature-card h-100 reveal"><h6 class="text-uppercase text-muted mb-2">Marketing</h6><h5 class="fw-semibold">Campaign visuals</h5><p class="text-muted">Generate sleek promo posters that match your brand in seconds.</p><ul class="text-muted small mb-0"><li>Product launches</li><li>Seasonal offers</li><li>Social ads</li></ul></div></div>
+        <div class="col-md-4"><div class="feature-card h-100 reveal"><h6 class="text-uppercase text-muted mb-2">Creators</h6><h5 class="fw-semibold">Content-ready art</h5><p class="text-muted">On-brand graphics for videos, streams, and community posts.</p><ul class="text-muted small mb-0"><li>Thumbnail frames</li><li>Event announcements</li><li>Channel promos</li></ul></div></div>
+        <div class="col-md-4"><div class="feature-card h-100 reveal"><h6 class="text-uppercase text-muted mb-2">Business</h6><h5 class="fw-semibold">Print & signage</h5><p class="text-muted">Clean, high‑resolution exports perfect for print or digital kiosks.</p><ul class="text-muted small mb-0"><li>Store posters</li><li>Conference boards</li><li>Internal comms</li></ul></div></div>
+                        </div>
+                    </div>
+  </section>
+
+  <section id="how" class="py-5 section-muted">
+    <div class="container py-2">
+      <div class="text-center mb-4">
+        <h2 class="section-title">How it works</h2>
+        <p class="text-muted">Three simple steps to beautiful results.</p>
+                </div>
+      <div class="row g-4">
+        <div class="col-md-4"><div class="feature-card text-center reveal"><div class="feature-icon mx-auto mb-3"><i class="fa-solid fa-pen-nib"></i></div><h6 class="fw-semibold mb-1">1. Describe your idea</h6><p class="text-muted mb-0">Type a short brief or choose a template.</p></div></div>
+        <div class="col-md-4"><div class="feature-card text-center reveal"><div class="feature-icon mx-auto mb-3"><i class="fa-solid fa-robot"></i></div><h6 class="fw-semibold mb-1">2. Let AI compose</h6><p class="text-muted mb-0">Postasy creates balanced layouts and color.</p></div></div>
+        <div class="col-md-4"><div class="feature-card text-center reveal"><div class="feature-icon mx-auto mb-3"><i class="fa-solid fa-file-arrow-down"></i></div><h6 class="fw-semibold mb-1">3. Export and share</h6><p class="text-muted mb-0">Download high‑res files, ready for print or socials.</p></div></div>
+            </div>
+        </div>
+    </section>
+
+  <section id="gallery" class="py-5">
+    <div class="container py-2">
+      <div class="d-flex justify-content-between align-items-end mb-3">
+        <div>
+          <h2 class="section-title mb-1">Template gallery</h2>
+          <p class="text-muted mb-0">A few starting points you can customize instantly.</p>
+            </div>
+        <a href="/poster/public" class="btn btn-outline-brand">Explore all</a>
+                            </div>
+      <div class="row g-3">
+        <div class="col-6 col-lg-3"><div class="template-thumb reveal"><img src="/static/uploads/posters/poster_a16ac3d5-2bf7-48c7-94dd-e20b8593295d.png" alt="Template"/></div></div>
+        <div class="col-6 col-lg-3"><div class="template-thumb reveal"><img src="/static/uploads/posters/poster_a37ec132-72ed-4249-873b-5bd0a05c5795.png" alt="Template"/></div></div>
+        <div class="col-6 col-lg-3"><div class="template-thumb reveal"><img src="/static/uploads/posters/poster_909b1bc9-1284-4161-9cd8-fe3d4dd13ad8.png" alt="Template"/></div></div>
+        <div class="col-6 col-lg-3"><div class="template-thumb reveal"><img src="/static/uploads/posters/poster_fd19b556-d532-4d49-b957-12c7103410ff.png" alt="Template"/></div></div>
+                    </div>
+                </div>
+  </section>
+
+  <section id="testimonials" class="py-5 section-muted">
+    <div class="container py-2">
+      <div class="text-center mb-4">
+        <h2 class="section-title">Loved by teams</h2>
+        <p class="text-muted">What our users say about Postasy.</p>
+                            </div>
+      <div class="row g-4">
+        <div class="col-md-4"><div class="feature-card reveal"><p class="mb-2">“The quickest way we’ve found to keep campaign visuals on-brand.”</p><div class="d-flex align-items-center gap-3"><div class="rounded-circle" style="width:40px;height:40px;background:#e6ecf7"></div><div><div class="fw-semibold">Maya S.</div><div class="text-muted small">Growth Lead</div></div></div></div></div>
+        <div class="col-md-4"><div class="feature-card reveal"><p class="mb-2">“Feels like an in‑house designer for our events.”</p><div class="d-flex align-items-center gap-3"><div class="rounded-circle" style="width:40px;height:40px;background:#e6ecf7"></div><div><div class="fw-semibold">Ankit R.</div><div class="text-muted small">Event Ops</div></div></div></div></div>
+        <div class="col-md-4"><div class="feature-card reveal"><p class="mb-2">“The white UI with blue accents looks premium in front of clients.”</p><div class="d-flex align-items-center gap-3"><div class="rounded-circle" style="width:40px;height:40px;background:#e6ecf7"></div><div><div class="fw-semibold">Lena K.</div><div class="text-muted small">Designer</div></div></div></div></div>
+                    </div>
+                </div>
+  </section>
+
+  <section id="faq" class="py-5">
+    <div class="container py-2">
+      <div class="text-center mb-4">
+        <h2 class="section-title">FAQs</h2>
+        <p class="text-muted">Quick answers to common questions.</p>
+                    </div>
+      <div class="row g-3">
+        <div class="col-md-6"><div class="feature-card reveal"><h6 class="fw-semibold mb-1">Can I use the posters commercially?</h6><p class="text-muted mb-0">Yes. Your exports are licensed for commercial use according to your plan.</p></div></div>
+        <div class="col-md-6"><div class="feature-card reveal"><h6 class="fw-semibold mb-1">Do you support custom branding?</h6><p class="text-muted mb-0">Upload your logo and brand colors to generate on‑brand assets instantly.</p></div></div>
+        <div class="col-md-6"><div class="feature-card reveal"><h6 class="fw-semibold mb-1">What about print quality?</h6><p class="text-muted mb-0">Download high‑resolution files suitable for professional printing.</p></div></div>
+        <div class="col-md-6"><div class="feature-card reveal"><h6 class="fw-semibold mb-1">Can my team collaborate?</h6><p class="text-muted mb-0">Yes. Share editable links and manage brand presets with Business.</p></div></div>
+            </div>
+        </div>
+    </section>
+
+  <section id="partners" class="py-5 section-muted">
+    <div class="container py-2">
+      <div class="text-center mb-4">
+        <h2 class="section-title">Trusted by modern teams</h2>
+        <p class="text-muted">Logos for demonstration purposes.</p>
+      </div>
+      <div class="row g-4 text-center align-items-center">
+        <div class="col-6 col-md-3"><div class="py-3 px-4 feature-card reveal">NovaTech</div></div>
+        <div class="col-6 col-md-3"><div class="py-3 px-4 feature-card reveal">BlueWave</div></div>
+        <div class="col-6 col-md-3"><div class="py-3 px-4 feature-card reveal">SkyLabs</div></div>
+        <div class="col-6 col-md-3"><div class="py-3 px-4 feature-card reveal">PixelCo</div></div>
+            </div>
+        </div>
+    </section>
+
+  <!-- CTA Band -->
+  <section class="py-5">
+        <div class="container">
+      <div class="cta-band d-flex flex-column flex-lg-row align-items-center justify-content-between gap-3 reveal">
+        <div>
+          <h3 class="m-0" style="font-family:var(--font-family-primary, 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif); font-weight:800;">Ready to design with Postasy?</h3>
+          <p class="text-muted m-0">Create elegant posters in minutes with your brand palette.</p>
+        </div>
+        <div class="d-flex gap-2">
+          <a class="btn btn-primary-brand" href="/auth/register"><i class="fa-solid fa-rocket me-2"></i>Get Started</a>
+          <a class="btn btn-outline-brand" href="#gallery">See Templates</a>
+                    </div>
+            </div>
+        </div>
+  </section>
+
+  <footer class="py-4 border-top" style="border-color: rgba(24,66,128,.15)!important">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <span class="text-muted">© 2025 Postasy</span>
+      <div class="d-flex gap-3">
+        <a href="{{ url_for('main.privacy_page') }}" class="text-decoration-none" style="color:var(--primary)">Privacy</a>
+        <a href="{{ url_for('main.terms_page') }}" class="text-decoration-none" style="color:var(--primary)">Terms</a>
+      </div>
+    </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    // Navbar shadow on scroll
+    const nav = document.querySelector('.navbar');
+    window.addEventListener('scroll', () => {
+      nav.style.boxShadow = window.scrollY > 10 ? '0 8px 24px rgba(24,66,128,.08)' : 'none';
+    });
+
+    // Scroll reveal
+    const revealEls = document.querySelectorAll('.reveal, .feature-card, .section-title');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('revealed'); io.unobserve(e.target); } });
+    }, { threshold: 0.15 });
+    revealEls.forEach(el => io.observe(el));
+
+    // Count-up for stats
+    const counters = document.querySelectorAll('.stat-number');
+    counters.forEach(el => {
+      const target = parseInt(el.dataset.target || '0', 10);
+      let current = 0;
+      const step = Math.max(1, Math.floor(target / 120));
+      const tick = () => {
+        current += step;
+        if (current >= target) { el.textContent = target.toLocaleString(); }
+        else { el.textContent = current.toLocaleString(); requestAnimationFrame(tick); }
+      };
+      requestAnimationFrame(tick);
+        });
+    </script>
+</body>
+</html>

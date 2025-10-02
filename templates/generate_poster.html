@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Generate Poster - Postasy{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <h3 class="card-title">
+                        <i class="fas fa-magic me-2"></i>Generate AI Poster
+                    </h3>
+                    <p class="text-muted">
+                        Describe your poster and choose which profile information to include
+                    </p>
+                </div>
+                
+                <form method="POST" id="posterForm">
+                    {{ form.hidden_tag() }}
+                    
+                    <!-- Poster Details -->
+                    <div class="mb-4">
+                        <h5 class="border-bottom pb-2 mb-3">Poster Details</h5>
+                        
+                        <div class="mb-3">
+                            {{ form.title.label(class="form-label") }}
+                            {{ form.title(class="form-control") }}
+                            {% if form.title.errors %}
+                                <div class="text-danger small">
+                                    {% for error in form.title.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.prompt.label(class="form-label") }}
+                            {{ form.prompt(class="form-control", rows="4", placeholder="Describe your poster in detail. For example: 'A modern poster for a coffee shop grand opening with warm colors, coffee beans background, and professional typography'") }}
+                            {% if form.prompt.errors %}
+                                <div class="text-danger small">
+                                    {% for error in form.prompt.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                Be specific about style, colors, theme, and visual elements you want.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Note: Profile information can be added in the editor after generation -->
+                    <div class="mb-4">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Tip:</strong> You can add your company information, logo, and contact details in the editor after generating your poster.
+                        </div>
+                    </div>
+                    
+                    <!-- Layout Information -->
+                    <div class="mb-4">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>New Layout:</strong> Your poster will be created with blank spaces at the top and bottom. 
+                            Selected profile information will be displayed in these spaces for a professional look.
+                        </div>
+                    </div>
+                    
+                    <!-- Settings -->
+                    <div class="mb-4">
+                        <h5 class="border-bottom pb-2 mb-3">Settings</h5>
+                        
+                        <div class="form-check mb-3">
+                            {{ form.is_public(class="form-check-input") }}
+                            {{ form.is_public.label(class="form-check-label") }}
+                            <div class="form-text">Public posters can be viewed by anyone in the explore section</div>
+                        </div>
+                        
+                        {% if not current_user.has_premium_access() %}
+                            <div class="alert alert-warning">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>{{ current_user.user_type.title() }} Account:</strong> 
+                                You have {{ current_user.get_remaining_daily_posts() }} poster(s) remaining today 
+                                ({{ current_user.get_daily_poster_count() }}/{{ current_user.get_daily_poster_limit() }} used). 
+                                Generated posters will include a watermark. 
+                                <a href="{{ url_for('payment.plans') }}" class="alert-link">Upgrade to Premium</a> 
+                                for unlimited access and watermark-free downloads.
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-lg px-4" id="generateBtn">
+                            <i class="fas fa-magic me-2"></i>Generate Poster
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Modal -->
+<div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center py-5">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h5>Generating Your Poster</h5>
+                <p class="text-muted mb-0">This may take a few moments...</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('posterForm').addEventListener('submit', function(e) {
+    // Show loading modal
+    const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+    loadingModal.show();
+    
+    // Disable submit button
+    const submitBtn = document.getElementById('generateBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generating...';
+});
+
+// Character counter for prompt
+const promptField = document.getElementById('prompt');
+if (promptField) {
+    const counter = document.createElement('div');
+    counter.className = 'form-text text-end';
+    counter.innerHTML = '<span id="charCount">0</span>/1000 characters';
+    promptField.parentNode.appendChild(counter);
+    
+    promptField.addEventListener('input', function() {
+        const count = this.value.length;
+        document.getElementById('charCount').textContent = count;
+        
+        if (count > 900) {
+            counter.className = 'form-text text-end text-warning';
+        } else if (count > 1000) {
+            counter.className = 'form-text text-end text-danger';
+        } else {
+            counter.className = 'form-text text-end';
+        }
+    });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,214 @@
+/* General Setup */
+:root {
+    --primary-color: #4A90E2;
+    --primary-hover: #357ABD;
+    --secondary-color: #50E3C2;
+    --background-dark: #2c3e50;
+    --panel-dark: #34495e;
+    --text-light: #ecf0f1;
+    --border-color: #4a6a8a;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background-color: var(--background-dark);
+    color: var(--text-light);
+}
+
+.editor-container {
+    display: flex;
+    height: 100vh;
+}
+
+/* Left Panel Styling */
+.left-panel {
+    width: 280px;
+    background-color: var(--panel-dark);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    border-right: 2px solid var(--border-color);
+}
+
+.logo-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.logo-header h2 {
+    margin: 0 0 0 10px;
+}
+
+.main-tools .tool-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: none;
+    border: 1px solid transparent;
+    color: var(--text-light);
+    text-align: left;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s, border-left 0.2s;
+}
+
+.main-tools .tool-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.main-tools .tool-btn i {
+    margin-right: 15px;
+    width: 20px;
+}
+
+/* Collapsible Panels */
+.panel {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.panel-header {
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--text-light);
+    padding: 15px 10px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.panel-header:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.panel-content {
+    padding: 0 15px 15px;
+    display: none; /* Hidden by default */
+}
+
+/* Main Area Styling */
+.main-area {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    background-color: var(--panel-dark);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.poster-title {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn-secondary {
+    background: none;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    margin-right: 10px;
+}
+.btn-secondary:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Canvas & Loading Overlay */
+.canvas-container {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 40px;
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(44, 62, 80, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    visibility: visible; /* Initially visible */
+    opacity: 1;
+    transition: visibility 0.2s, opacity 0.2s;
+}
+
+.loading-overlay.hidden {
+    visibility: hidden;
+    opacity: 0;
+}
+
+.spinner {
+    border: 5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 5px solid var(--secondary-color);
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#posterCanvas {
+    width: 800px; /* Example size */
+    height: 600px;
+    background-color: white;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+/* Export Buttons */
+.export-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #4a6a8a;
+    border: none;
+    color: var(--text-light);
+    border-radius: 5px;
+    cursor: pointer;
+}
+.export-btn:hover {
+    background-color: #5b7e9f;
+}

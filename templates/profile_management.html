@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Profile - Postasy{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <h3 class="card-title">
+                        <i class="fas fa-user-edit me-2"></i>Manage Profile
+                    </h3>
+                    <p class="text-muted">
+                        Update your business information and settings
+                    </p>
+                </div>
+                
+                <form method="POST" enctype="multipart/form-data">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row">
+                        <!-- Personal Information -->
+                        <div class="col-md-6">
+                            <h5 class="border-bottom pb-2 mb-3">Personal Information</h5>
+                            
+                            <div class="mb-3">
+                                {{ form.full_name.label(class="form-label") }}
+                                {{ form.full_name(class="form-control") }}
+                                {% if form.full_name.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.full_name.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ form.phone.label(class="form-label") }}
+                                {{ form.phone(class="form-control") }}
+                                {% if form.phone.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.phone.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ form.address.label(class="form-label") }}
+                                {{ form.address(class="form-control", rows="3") }}
+                                {% if form.address.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.address.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Business Information -->
+                        <div class="col-md-6">
+                            <h5 class="border-bottom pb-2 mb-3">Business Information</h5>
+                            
+                            <div class="mb-3">
+                                {{ form.business_name.label(class="form-label") }}
+                                {{ form.business_name(class="form-control") }}
+                                {% if form.business_name.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.business_name.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ form.logo.label(class="form-label") }}
+                                {% if current_user.logo_filename %}
+                                    <div class="mb-2">
+                                        <img src="{{ url_for('main.uploaded_file', filename='logos/' + current_user.logo_filename) }}" 
+                                             alt="Current logo" class="img-thumbnail" style="max-height: 100px;">
+                                        <p class="small text-muted mb-0">Current logo</p>
+                                    </div>
+                                {% endif %}
+                                {{ form.logo(class="form-control") }}
+                                {% if form.logo.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.logo.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Upload a new logo to replace current one (JPG, PNG)</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ form.website.label(class="form-label") }}
+                                {{ form.website(class="form-control") }}
+                                {% if form.website.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.website.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Social Media Links -->
+                    <h5 class="border-bottom pb-2 mb-3 mt-4">Social Media Links</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.facebook.label(class="form-label") }}
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fab fa-facebook text-primary"></i>
+                                    </span>
+                                    {{ form.facebook(class="form-control") }}
+                                </div>
+                                {% if form.facebook.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.facebook.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ form.instagram.label(class="form-label") }}
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fab fa-instagram text-danger"></i>
+                                    </span>
+                                    {{ form.instagram(class="form-control") }}
+                                </div>
+                                {% if form.instagram.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.instagram.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.twitter.label(class="form-label") }}
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fab fa-twitter text-info"></i>
+                                    </span>
+                                    {{ form.twitter(class="form-control") }}
+                                </div>
+                                {% if form.twitter.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.twitter.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ form.linkedin.label(class="form-label") }}
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fab fa-linkedin text-primary"></i>
+                                    </span>
+                                    {{ form.linkedin(class="form-control") }}
+                                </div>
+                                {% if form.linkedin.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.linkedin.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Account Information -->
+                    <h5 class="border-bottom pb-2 mb-3 mt-4">Account Information</h5>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card border-0 bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title">Account Status</h6>
+                                    {% if current_user.has_premium_access() %}
+                                        <span class="badge bg-warning text-dark">Premium</span>
+                                        <p class="card-text small text-muted mt-2">
+                                            Enjoy unlimited poster generation without watermarks.
+                                        </p>
+                                        <a href="{{ url_for('payment.portal') }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-credit-card me-1"></i>Manage Billing
+                                        </a>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Free</span>
+                                        <p class="card-text small text-muted mt-2">
+                                            Upgrade to remove watermarks and get unlimited access.
+                                        </p>
+                                        <a href="{{ url_for('payment.plans') }}" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-crown me-1"></i>Upgrade Now
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card border-0 bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title">Total Posters</h6>
+                                    <div class="h4 text-primary">{{ current_user.posters|length }}</div>
+                                    <p class="card-text small text-muted">
+                                        Posters created since {{ current_user.created_at.strftime('%B %Y') }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card border-0 bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title">Public Posters</h6>
+                                    <div class="h4 text-success">{{ current_user.posters|selectattr('is_public')|list|length }}</div>
+                                    <p class="card-text small text-muted">
+                                        Shared with the community
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Form Actions -->
+                    <div class="text-center mt-4">
+                        {{ form.submit(class="btn btn-primary btn-lg px-4") }}
+                        <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-secondary btn-lg px-4 ms-2">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Preview uploaded logo
+const logoInput = document.querySelector('input[type="file"]');
+if (logoInput) {
+    logoInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // Create or update preview
+                let preview = document.getElementById('logoPreview');
+                if (!preview) {
+                    preview = document.createElement('img');
+                    preview.id = 'logoPreview';
+                    preview.className = 'img-thumbnail mt-2';
+                    preview.style.maxHeight = '100px';
+                    logoInput.parentNode.appendChild(preview);
+                }
+                preview.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,397 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.username }}'s Profile - Postasy{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Profile Header -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-3 text-center">
+                            {% if user.logo_filename %}
+                                <img src="{{ url_for('static', filename='uploads/logos/' + user.logo_filename) }}" 
+                                     class="rounded-circle img-fluid mb-3" 
+                                     style="width: 150px; height: 150px; object-fit: cover;"
+                                     alt="{{ user.username }}'s avatar">
+                            {% else %}
+                                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                                     style="width: 150px; height: 150px; font-size: 3rem;">
+                                    {{ user.username[0].upper() }}
+                                </div>
+                            {% endif %}
+                            
+                            {% if current_user.is_authenticated and current_user.id == user.id %}
+                                <div class="mt-2">
+                                    <a href="{{ url_for('profile.manage') }}" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-edit me-1"></i>Edit Profile
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-9">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h1 class="h2 mb-1">
+                                        {{ user.full_name or user.username }}
+                                        {% if user.has_premium_access() %}
+                                            <span class="badge bg-warning text-dark ms-2">
+                                                <i class="fas fa-crown me-1"></i>Premium
+                                            </span>
+                                        {% endif %}
+                                    </h1>
+                                    
+                                    <p class="text-muted mb-2">@{{ user.username }}</p>
+                                    
+                                    {% if user.business_name %}
+                                        <h5 class="text-primary mb-2">
+                                            <i class="fas fa-building me-1"></i>{{ user.business_name }}
+                                        </h5>
+                                    {% endif %}
+                                    
+                                    {% if user.address %}
+                                        <p class="text-muted mb-2">
+                                            <i class="fas fa-map-marker-alt me-1"></i>{{ user.address }}
+                                        </p>
+                                    {% endif %}
+                                    
+                                    {% if user.phone %}
+                                        <p class="text-muted mb-2">
+                                            <i class="fas fa-phone me-1"></i>{{ user.phone }}
+                                        </p>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="text-end">
+                                    <div class="d-flex gap-3 mb-3">
+                                        <div class="text-center">
+                                            <div class="h4 mb-0 text-primary">{{ user.posters|length }}</div>
+                                            <small class="text-muted">Posters</small>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="h4 mb-0 text-success">{{ user.posters|selectattr('is_public')|list|length }}</div>
+                                            <small class="text-muted">Public</small>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="h4 mb-0 text-info">{{ ((user.created_at|string).split(' ')[0].split('-')[0]) }}</div>
+                                            <small class="text-muted">Joined</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Social Links -->
+                            {% if user.website or user.facebook or user.instagram or user.twitter or user.linkedin %}
+                                <div class="mt-3">
+                                    <h6 class="text-muted mb-2">Connect</h6>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        {% if user.website %}
+                                            <a href="{{ user.website if user.website.startswith('http') else 'https://' + user.website }}" 
+                                               target="_blank" class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-globe me-1"></i>Website
+                                            </a>
+                                        {% endif %}
+                                        
+                                        {% if user.facebook %}
+                                            <a href="{{ user.facebook if user.facebook.startswith('http') else 'https://facebook.com/' + user.facebook }}" 
+                                               target="_blank" class="btn btn-outline-primary btn-sm">
+                                                <i class="fab fa-facebook me-1"></i>Facebook
+                                            </a>
+                                        {% endif %}
+                                        
+                                        {% if user.instagram %}
+                                            <a href="{{ user.instagram if user.instagram.startswith('http') else 'https://instagram.com/' + user.instagram }}" 
+                                               target="_blank" class="btn btn-outline-primary btn-sm">
+                                                <i class="fab fa-instagram me-1"></i>Instagram
+                                            </a>
+                                        {% endif %}
+                                        
+                                        {% if user.twitter %}
+                                            <a href="{{ user.twitter if user.twitter.startswith('http') else 'https://twitter.com/' + user.twitter }}" 
+                                               target="_blank" class="btn btn-outline-primary btn-sm">
+                                                <i class="fab fa-twitter me-1"></i>Twitter
+                                            </a>
+                                        {% endif %}
+                                        
+                                        {% if user.linkedin %}
+                                            <a href="{{ user.linkedin if user.linkedin.startswith('http') else 'https://linkedin.com/in/' + user.linkedin }}" 
+                                               target="_blank" class="btn btn-outline-primary btn-sm">
+                                                <i class="fab fa-linkedin me-1"></i>LinkedIn
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Navigation Tabs -->
+    <div class="row">
+        <div class="col-md-12">
+            <ul class="nav nav-tabs nav-fill mb-4" id="profileTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="posters-tab" data-bs-toggle="tab" data-bs-target="#posters" type="button" role="tab">
+                        <i class="fas fa-images me-1"></i>Posters <span class="badge bg-primary ms-1">{{ public_posters|length }}</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="about-tab" data-bs-toggle="tab" data-bs-target="#about" type="button" role="tab">
+                        <i class="fas fa-info-circle me-1"></i>About
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="activity-tab" data-bs-toggle="tab" data-bs-target="#activity" type="button" role="tab">
+                        <i class="fas fa-chart-line me-1"></i>Activity
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Tab Content -->
+    <div class="tab-content" id="profileTabContent">
+        <!-- Posters Tab -->
+        <div class="tab-pane fade show active" id="posters" role="tabpanel">
+            {% if public_posters %}
+                <div class="row g-4">
+                    {% for poster in public_posters %}
+                        <div class="col-md-4">
+                            <div class="card border-0 shadow-sm poster-card h-100">
+                                <div class="position-relative">
+                                    <img src="{{ url_for('static', filename='uploads/posters/' + poster.filename) }}" 
+                                         class="card-img-top" 
+                                         style="height: 250px; object-fit: cover;"
+                                         alt="{{ poster.title }}">
+                                    
+                                    <div class="position-absolute top-0 end-0 m-2">
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-globe me-1"></i>Public
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ poster.title }}</h6>
+                                    <p class="card-text small text-muted">{{ poster.prompt[:100] }}{% if poster.prompt|length > 100 %}...{% endif %}</p>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="fas fa-calendar me-1"></i>{{ poster.created_at.strftime('%b %d, %Y') }}
+                                        </small>
+                                        
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{{ url_for('poster.view', poster_id=poster.id) }}" 
+                                               class="btn btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            {% if current_user.is_authenticated and current_user.id == user.id %}
+                                                <a href="{{ url_for('poster.edit', poster_id=poster.id) }}" 
+                                                   class="btn btn-outline-secondary">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-images fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">No Public Posters</h4>
+                    <p class="text-muted">{{ user.username }} hasn't shared any posters publicly yet.</p>
+                    
+                    {% if current_user.is_authenticated and current_user.id == user.id %}
+                        <a href="{{ url_for('poster.generate') }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i>Create Your First Poster
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- About Tab -->
+        <div class="tab-pane fade" id="about" role="tabpanel">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-user me-2"></i>About {{ user.full_name or user.username }}
+                            </h5>
+                            
+                            {% if user.business_name %}
+                                <div class="mb-3">
+                                    <h6 class="text-primary">Business Information</h6>
+                                    <p><strong>Business Name:</strong> {{ user.business_name }}</p>
+                                    {% if user.address %}
+                                        <p><strong>Address:</strong> {{ user.address }}</p>
+                                    {% endif %}
+                                    {% if user.phone %}
+                                        <p><strong>Phone:</strong> {{ user.phone }}</p>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                            
+                            <div class="mb-3">
+                                <h6 class="text-primary">Platform Activity</h6>
+                                <p><strong>Member Since:</strong> {{ user.created_at.strftime('%B %Y') }}</p>
+                                <p><strong>Total Posters:</strong> {{ user.posters|length }}</p>
+                                <p><strong>Public Posters:</strong> {{ user.posters|selectattr('is_public')|list|length }}</p>
+                                <p><strong>Account Type:</strong> 
+                                    {% if user.has_premium_access() %}
+                                        <span class="badge bg-warning text-dark">Premium</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Free</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="fas fa-chart-pie me-2"></i>Quick Stats
+                            </h6>
+                            
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Total Posters:</span>
+                                <strong>{{ user.posters|length }}</strong>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Public Posters:</span>
+                                <strong class="text-success">{{ user.posters|selectattr('is_public')|list|length }}</strong>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Private Posters:</span>
+                                <strong class="text-secondary">{{ (user.posters|length) - (user.posters|selectattr('is_public')|list|length) }}</strong>
+                            </div>
+                            
+                            <hr>
+                            
+                            <div class="d-flex justify-content-between">
+                                <span>Joined:</span>
+                                <strong>{{ user.created_at.strftime('%b %Y') }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Activity Tab -->
+        <div class="tab-pane fade" id="activity" role="tabpanel">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-chart-line me-2"></i>Recent Activity
+                    </h5>
+                    
+                    {% if user.posters %}
+                        <div class="timeline">
+                            {% set recent_posters = user.posters|selectattr('is_public')|list|sort(attribute='created_at', reverse=true) %}
+                            {% for poster in recent_posters[:10] %}
+                                <div class="d-flex mb-3 pb-3 border-bottom">
+                                    <div class="me-3">
+                                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                             style="width: 40px; height: 40px;">
+                                            <i class="fas fa-image"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">Published "{{ poster.title }}"</h6>
+                                        <p class="text-muted small mb-0">
+                                            {{ poster.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <a href="{{ url_for('poster.view', poster_id=poster.id) }}" 
+                                           class="btn btn-outline-primary btn-sm">
+                                            View
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-clock fa-2x text-muted mb-3"></i>
+                            <h6 class="text-muted">No Recent Activity</h6>
+                            <p class="text-muted">{{ user.username }} hasn't been active recently.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.poster-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.poster-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.timeline {
+    position: relative;
+}
+
+.nav-tabs .nav-link {
+    color: var(--bs-body-color);
+    border: none;
+    background: transparent;
+}
+
+.nav-tabs .nav-link.active {
+    background: var(--bs-primary);
+    color: white;
+    border-radius: 0.375rem 0.375rem 0 0;
+}
+
+.nav-tabs {
+    border-bottom: 2px solid var(--bs-border-color);
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Add smooth scrolling to tabs
+document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
+    tab.addEventListener('shown.bs.tab', function (e) {
+        // Update URL hash without scrolling
+        history.replaceState(null, null, '#' + e.target.dataset.bsTarget.substring(1));
+    });
+});
+
+// Activate tab from URL hash
+document.addEventListener('DOMContentLoaded', function() {
+    const hash = window.location.hash;
+    if (hash) {
+        const tabButton = document.querySelector(`[data-bs-target="${hash}"]`);
+        if (tabButton) {
+            const tab = new bootstrap.Tab(tabButton);
+            tab.show();
+        }
+    }
+});
+</script>
+{% endblock %}

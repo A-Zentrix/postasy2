@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+
+{% block title %}Subscription Plans - Postasy{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<div class="text-center mb-5">
+    <h2 class="display-5 fw-bold mb-3">Choose Your Plan</h2>
+    <p class="lead text-muted">
+        Unlock the full potential of AI-powered poster creation
+    </p>
+</div>
+
+<!-- Pricing Cards -->
+<div class="row justify-content-center g-4">
+    <!-- Free Plan -->
+    <div class="col-lg-5">
+        <div class="card border-0 shadow h-100">
+            <div class="card-body p-4 text-center">
+                <h4 class="card-title mb-3">Free</h4>
+                <div class="mb-4">
+                    <span class="display-4 fw-bold">$0</span>
+                    <span class="text-muted fs-5">/month</span>
+                </div>
+                
+                <ul class="list-unstyled text-start mb-4">
+                    <li class="mb-3">
+                        <i class="fas fa-check text-success me-3"></i>
+                        <strong>5 posters per month</strong>
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check text-success me-3"></i>
+                        AI-powered poster generation
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check text-success me-3"></i>
+                        Business profile integration
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check text-success me-3"></i>
+                        Public gallery sharing
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-times text-muted me-3"></i>
+                        <span class="text-muted">Watermarked downloads</span>
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-times text-muted me-3"></i>
+                        <span class="text-muted">Basic support</span>
+                    </li>
+                </ul>
+                
+                {% if current_user.has_premium_access() %}
+                    <button class="btn btn-outline-secondary btn-lg w-100" disabled>
+                        <i class="fas fa-check me-2"></i>Current Plan
+                    </button>
+                {% else %}
+                    <button class="btn btn-outline-secondary btn-lg w-100" disabled>
+                        <i class="fas fa-user me-2"></i>Current Plan
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Premium Plan -->
+    <div class="col-lg-5">
+        <div class="card border-primary border-2 shadow h-100 position-relative">
+            <!-- Popular Badge -->
+            <div class="position-absolute top-0 start-50 translate-middle">
+                <span class="badge bg-primary px-3 py-2">Most Popular</span>
+            </div>
+            
+            <div class="card-body p-4 text-center">
+                <h4 class="card-title mb-3 text-primary">Premium</h4>
+                <div class="mb-4">
+                    <span class="display-4 fw-bold text-primary">$19</span>
+                    <span class="text-muted fs-5">/month</span>
+                </div>
+                
+                <ul class="list-unstyled text-start mb-4">
+                    <li class="mb-3">
+                        <i class="fas fa-check text-success me-3"></i>
+                        <strong>Unlimited posters</strong>
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check text-success me-3"></i>
+                        Advanced AI generation
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check text-success me-3"></i>
+                        No watermarks
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check text-success me-3"></i>
+                        High-resolution downloads
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check text-success me-3"></i>
+                        Priority support
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check text-success me-3"></i>
+                        Custom business branding
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check text-success me-3"></i>
+                        Advanced analytics
+                    </li>
+                </ul>
+                
+                {% if current_user.has_premium_access() %}
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-success btn-lg" disabled>
+                            <i class="fas fa-crown me-2"></i>Active Subscription
+                        </button>
+                        <a href="{{ url_for('payment.portal') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-cog me-2"></i>Manage Billing
+                        </a>
+                    </div>
+                {% else %}
+                    <a href="{{ url_for('payment.checkout', plan_id='pro') }}" class="btn btn-primary btn-lg w-100">
+                        <i class="fas fa-crown me-2"></i>Upgrade Now
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Comparison -->
+<div class="mt-5">
+    <h3 class="text-center mb-4">Feature Comparison</h3>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>Feature</th>
+                    <th class="text-center">Free</th>
+                    <th class="text-center">Premium</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Monthly poster limit</strong></td>
+                    <td class="text-center">5 posters</td>
+                    <td class="text-center"><span class="text-success">Unlimited</span></td>
+                </tr>
+                <tr>
+                    <td><strong>AI image generation</strong></td>
+                    <td class="text-center"><i class="fas fa-check text-success"></i></td>
+                    <td class="text-center"><i class="fas fa-check text-success"></i></td>
+                </tr>
+                <tr>
+                    <td><strong>Profile integration</strong></td>
+                    <td class="text-center"><i class="fas fa-check text-success"></i></td>
+                    <td class="text-center"><i class="fas fa-check text-success"></i></td>
+                </tr>
+                <tr>
+                    <td><strong>Watermark removal</strong></td>
+                    <td class="text-center"><i class="fas fa-times text-danger"></i></td>
+                    <td class="text-center"><i class="fas fa-check text-success"></i></td>
+                </tr>
+                <tr>
+                    <td><strong>High-resolution downloads</strong></td>
+                    <td class="text-center">Standard quality</td>
+                    <td class="text-center"><span class="text-success">HD Quality</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Support</strong></td>
+                    <td class="text-center">Basic</td>
+                    <td class="text-center"><span class="text-success">Priority</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Custom branding</strong></td>
+                    <td class="text-center"><i class="fas fa-times text-danger"></i></td>
+                    <td class="text-center"><i class="fas fa-check text-success"></i></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- FAQ Section -->
+<div class="mt-5">
+    <h3 class="text-center mb-4">Frequently Asked Questions</h3>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="accordion" id="faqAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faq1">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
+                            Can I cancel my subscription anytime?
+                        </button>
+                    </h2>
+                    <div id="collapse1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Yes, you can cancel your premium subscription at any time through the billing portal. 
+                            You'll continue to have premium access until the end of your current billing period.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faq2">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
+                            What happens to my posters if I downgrade?
+                        </button>
+                    </h2>
+                    <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            All your existing posters will remain accessible. However, new posters created on the free plan 
+                            will include watermarks, and you'll be limited to 5 posters per month.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faq3">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
+                            Do you offer refunds?
+                        </button>
+                    </h2>
+                    <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            We offer a 7-day money-back guarantee for new premium subscriptions. 
+                            Contact our support team if you're not satisfied with your purchase.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faq4">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4">
+                            Can I use generated posters commercially?
+                        </button>
+                    </h2>
+                    <div id="collapse4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Yes, you have full commercial rights to use any posters you generate with Postasy 
+                            for your business or client projects.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action -->
+{% if not current_user.has_premium_access() %}
+<div class="text-center mt-5 py-5 bg-primary bg-opacity-10 rounded">
+    <h3 class="mb-3">Ready to Create Unlimited Professional Posters?</h3>
+    <p class="mb-4 text-muted">Join thousands of businesses using AI to create stunning marketing materials.</p>
+    <a href="{{ url_for('payment.plans') }}" class="btn btn-primary btn-lg px-4">
+        <i class="fas fa-crown me-2"></i>Start Premium Trial
+    </a>
+</div>
+{% endif %}
+{% endblock %}

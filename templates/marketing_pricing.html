@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Pricing - Postasy{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="text-center mb-4">
+    <h1 class="luxury-heading mb-2">Fair pricing for every stage</h1>
+    <p class="text-muted">Simple monthly plans in INR. No contracts. Cancel anytime.</p>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-6 col-lg-3">
+      <div class="card-premium p-4 h-100">
+        <h6 class="text-uppercase text-muted mb-1">Free</h6>
+        <h3 class="mb-2">₹0</h3>
+        <ul class="text-muted small mb-3 ps-3">
+          <li>10 Templates/month</li>
+          <li>Watermarked downloads</li>
+          <li>No AI features</li>
+          <li>No Scheduling</li>
+        </ul>
+        <a class="btn btn-premium btn-premium-outline w-100" href="{{ url_for('auth.register') }}">Start Free</a>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+      <div class="card-premium p-4 h-100">
+        <h6 class="text-uppercase text-muted mb-1">Starter</h6>
+        <h3 class="mb-2">₹99<span class="text-muted small">/month</span></h3>
+        <ul class="text-muted small mb-3 ps-3">
+          <li>50 Templates/month</li>
+          <li>Remove watermark</li>
+          <li>Scheduler (5 posts/week)</li>
+          <li>Pre-made trending templates</li>
+        </ul>
+        <a class="btn btn-premium btn-premium-primary w-100" href="{{ url_for('payment.plans') }}">Choose Starter</a>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+      <div class="card-premium p-4 h-100" style="outline: 0 0 0 8px rgba(58,107,175,.08)">
+        <h6 class="text-uppercase text-muted mb-1">Pro</h6>
+        <h3 class="mb-2">₹399<span class="text-muted small">/month</span></h3>
+        <ul class="text-muted small mb-3 ps-3">
+          <li>Unlimited Templates</li>
+          <li>AI Brand Assistant</li>
+          <li>AI Captions + Hashtags</li>
+          <li>Scheduler (Unlimited)</li>
+          <li>Instagram Performance Dashboard</li>
+        </ul>
+        <a class="btn btn-premium btn-premium-primary w-100" href="{{ url_for('payment.plans') }}">Choose Pro</a>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+      <div class="card-premium p-4 h-100">
+        <h6 class="text-uppercase text-muted mb-1">Agency</h6>
+        <h3 class="mb-2">₹999<span class="text-muted small">/month</span></h3>
+        <ul class="text-muted small mb-3 ps-3">
+          <li>Everything in Pro</li>
+          <li>5 Client Accounts</li>
+          <li>Approval Workflow</li>
+          <li>White-label reports</li>
+          <li>API Access</li>
+        </ul>
+        <a class="btn btn-premium btn-premium-outline w-100" href="{{ url_for('payment.plans') }}">Choose Agency</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-5 text-center text-muted small">
+    Prices include applicable taxes where required. Features may change as we improve the product.
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Privacy Policy - Postasy{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <h1 class="luxury-heading mb-3">Privacy Policy</h1>
+  <p class="text-muted">Effective date: {{ (now() if now else '2025') }}</p>
+
+  <p class="text-muted">This Privacy Policy explains how Postasy ("we", "us", "our") collects, uses, and shares information about you when you use our websites, products, and services (collectively, the "Services").</p>
+
+  <h5 class="mt-4">1. Information we collect</h5>
+  <ul class="text-muted">
+    <li><strong>Account data</strong>: name, username, email, password hash, and preferences.</li>
+    <li><strong>Content</strong>: images, logos, posters, prompts, and related metadata you upload or generate.</li>
+    <li><strong>Usage data</strong>: device information, log data, IP address, browser type, pages viewed, and interactions for security and analytics.</li>
+    <li><strong>Payment data</strong>: handled by our payment processor (e.g., Stripe). We do not store full card numbers.</li>
+    <li><strong>Cookies and similar technologies</strong>: used for authentication, preferences, and analytics. See “Cookies” below.</li>
+  </ul>
+
+  <h5 class="mt-4">2. How we use information</h5>
+  <ul class="text-muted">
+    <li>Provide, maintain, and improve the Services and features (including AI‑powered generation).</li>
+    <li>Authenticate users, personalize experiences, and provide customer support.</li>
+    <li>Monitor, prevent, and detect fraud, abuse, and security risks.</li>
+    <li>Process transactions and send transactional or product communications.</li>
+    <li>Conduct analytics and product research to enhance quality and performance.</li>
+    <li>Comply with legal obligations and enforce our Terms.</li>
+  </ul>
+
+  <h5 class="mt-4">3. Legal bases for processing (EEA/UK)</h5>
+  <p class="text-muted">Where applicable, we process your information under one or more legal bases: performance of a contract (to provide the Services), legitimate interests (e.g., security, product improvement), consent (e.g., certain marketing/cookies), and compliance with legal obligations.</p>
+
+  <h5 class="mt-4">4. Sharing of information</h5>
+  <p class="text-muted">We share information with service providers and processors that support our operations (hosting, storage, analytics, payments, email). These parties are bound by contractual obligations to protect your data and use it only on our instructions. We may share information as required by law, to protect rights and safety, or in connection with a business transaction (e.g., merger or acquisition). We do not sell personal data.</p>
+
+  <h5 class="mt-4">5. International transfers</h5>
+  <p class="text-muted">Your information may be transferred to and processed in countries other than your own. Where required, we use appropriate safeguards (such as Standard Contractual Clauses) to protect your information.</p>
+
+  <h5 class="mt-4">6. Data retention</h5>
+  <p class="text-muted">We retain information for as long as necessary to provide the Services, comply with legal obligations, resolve disputes, and enforce agreements. Retention periods vary by data type and use case.</p>
+
+  <h5 class="mt-4">7. Security</h5>
+  <p class="text-muted">We use administrative, technical, and organizational measures to protect information, including encryption in transit, access controls, and monitoring. No method is 100% secure; please use strong passwords and safeguard your account.</p>
+
+  <h5 class="mt-4">8. Your rights and choices</h5>
+  <ul class="text-muted">
+    <li>Access, correct, or delete certain information via your account or by contacting us.</li>
+    <li>Object to or restrict certain processing, and request data portability, where applicable.</li>
+    <li>Withdraw consent where processing relies on consent.</li>
+    <li>Opt out of non‑essential marketing communications at any time.</li>
+  </ul>
+
+  <h5 class="mt-4">9. Cookies</h5>
+  <p class="text-muted">We use cookies and similar technologies for authentication, preferences, and analytics. You can control cookies through your browser settings. Disabling cookies may impact certain features.</p>
+
+  <h5 class="mt-4">10. Children</h5>
+  <p class="text-muted">The Services are not directed to children under 13 (or as required by local law). If we learn we collected such data, we will delete it.</p>
+
+  <h5 class="mt-4">11. Changes to this policy</h5>
+  <p class="text-muted">We may update this Privacy Policy over time. We will post the updated version and revise the effective date. Material changes may be communicated in‑app or via email.</p>
+
+  <h5 class="mt-4">12. Contact</h5>
+  <div class="mt-2 p-3 border rounded bg-premium-gray">
+    <p class="mb-1"><strong>Controller</strong>: Postasy</p>
+    <p class="mb-0 text-muted">privacy@postasy.app</p>
+  </div>
+</div>
+{% endblock %}
