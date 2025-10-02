@@ -1018,11 +1018,6 @@ def pricing_page():
 def privacy_page():
     return render_template('marketing_privacy.html')
 
-@main_bp.route('/terms')
-def terms_page():
-    """Terms of Service page"""
-    return render_template('marketing_terms.html')
-
 @main_bp.route('/about')
 def about_page():
     return render_template('marketing_about.html')

@@ -207,9 +207,6 @@
         .bg-premium-gray-light { background: var(--premium-gray-light) !important; }
         .border-premium-gold { border-color: var(--primary-gold) !important; }
         
-        /* Fine-tune vertical alignment for Sign In link */
-        .signin-link { position: relative; top: 15px; }
-        
         /* Responsive */
         @media (max-width: 768px) {
             .navbar-brand-premium { font-size: 1.5rem; }
@@ -293,7 +290,7 @@
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link-premium signin-link" href="{{ url_for('auth.login') }}">Sign In</a>
+                            <a class="nav-link-premium" href="{{ url_for('auth.login') }}">Sign In</a>
                         </li>
                         <li class="nav-item">
                             <a class="btn-premium btn-premium-primary" href="{{ url_for('auth.register') }}">
@@ -334,8 +331,7 @@
                         &copy; 2025 Postasy. All rights reserved. |
                         <a href="{{ url_for('main.about_page') }}" class="text-decoration-none text-premium-gold">About</a> |
                         <a href="{{ url_for('main.pricing_page') }}" class="text-decoration-none text-premium-gold">Pricing</a> |
-                        <a href="{{ url_for('main.privacy_page') }}" class="text-decoration-none text-premium-gold">Privacy</a> |
-                        <a href="{{ url_for('main.terms_page') }}" class="text-decoration-none text-premium-gold">Terms</a>
+                        <a href="{{ url_for('main.privacy_page') }}" class="text-decoration-none text-premium-gold">Privacy</a>
                     </p>
                 </div>
             </div>

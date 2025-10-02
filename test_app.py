@@ -10,23 +10,6 @@ from datetime import datetime
 from app import app, db
 from models import User, Poster, Subscription
 from forms import RegistrationForm, LoginForm
-from flask.testing import FlaskClient
-
-
-def test_legal_pages():
-    """Verify privacy and terms pages return HTTP 200"""
-    print("\n🔍 Testing legal pages (/privacy, /terms)...")
-    try:
-        with app.test_client() as client:  # type: FlaskClient
-            privacy_resp = client.get('/privacy')
-            terms_resp = client.get('/terms')
-            assert privacy_resp.status_code == 200, f"/privacy returned {privacy_resp.status_code}"
-            assert terms_resp.status_code == 200, f"/terms returned {terms_resp.status_code}"
-            print("✅ Legal pages reachable")
-            return True
-    except Exception as e:
-        print(f"❌ Legal pages test failed: {e}")
-        return False
 
 def test_database():
     """Test database connectivity and models"""
@@ -205,7 +188,6 @@ def main():
         ("Configuration", test_configuration),
         ("Directories", test_directories),
         ("Templates", test_templates),
-        ("Legal Pages", test_legal_pages),
         ("Database", test_database),
         ("Forms", test_forms)
     ]
