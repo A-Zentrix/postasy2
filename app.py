@@ -3,10 +3,8 @@ import logging
 from datetime import datetime
 
 from flask import Flask, request
-from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
-from sqlalchemy.orm import DeclarativeBase
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 # Import configuration
@@ -15,10 +13,8 @@ from config import config
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 
-class Base(DeclarativeBase):
-    pass
-
-db = SQLAlchemy(model_class=Base)
+# Import db from models to avoid circular imports
+from models import db
 login_manager = LoginManager()
 csrf = CSRFProtect()
 

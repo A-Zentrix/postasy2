@@ -6,8 +6,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
 from sqlalchemy import desc
 
-from app import db
-from models import User, Poster, Subscription
+from models import db, User, Poster, Subscription
 from forms import LoginForm, RegistrationForm, ProfileSetupForm, PosterGenerationForm, ProfileEditForm
 from gemini_service import generate_poster_image, validate_prompt
 from image_service import add_watermark, add_profile_overlay, save_uploaded_file, generate_filename, add_logo_to_poster_top
@@ -1017,6 +1016,10 @@ def pricing_page():
 @main_bp.route('/privacy')
 def privacy_page():
     return render_template('marketing_privacy.html')
+
+@main_bp.route('/terms')
+def terms_page():
+    return render_template('marketing_terms.html')
 
 @main_bp.route('/about')
 def about_page():
