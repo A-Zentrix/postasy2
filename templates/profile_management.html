@@ -199,7 +199,8 @@
                                         <p class="card-text small text-muted mt-2">
                                             Enjoy unlimited poster generation without watermarks.
                                         </p>
-                                        <a href="{{ url_for('payment.portal') }}" class="btn btn-sm btn-outline-primary">
+                                        <!-- Portal removed; Stripe disabled -->
+                                        <a href="{{ url_for('payment.plans') }}" class="btn btn-sm btn-outline-primary">
                                             <i class="fas fa-credit-card me-1"></i>Manage Billing
                                         </a>
                                     {% else %}

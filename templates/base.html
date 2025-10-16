@@ -278,7 +278,8 @@
                                         <i class="fas fa-crown me-2"></i>Upgrade
                                     </a></li>
                                 {% else %}
-                                    <li><a class="dropdown-item text-premium-gold" href="{{ url_for('payment.portal') }}">
+                                    <!-- Portal removed; Stripe disabled -->
+                                    <li><a class="dropdown-item text-premium-gold" href="{{ url_for('payment.plans') }}">
                                         <i class="fas fa-credit-card me-2"></i>Billing
                                     </a></li>
                                 {% endif %}

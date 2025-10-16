@@ -47,7 +47,8 @@
                         <div class="card-footer text-center">
                             {% if plan_id == current_plan %}
                                 {% if plan_id != 'free' %}
-                                <a href="{{ url_for('payment.portal') }}" class="btn btn-outline-primary">
+                                <!-- Portal removed; Stripe disabled -->
+                                <a href="{{ url_for('payment.plans') }}" class="btn btn-outline-primary">
                                     Manage Subscription
                                 </a>
                                 {% else %}

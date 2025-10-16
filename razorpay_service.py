@@ -1,5 +1,10 @@
 import os
-import razorpay
+try:
+    import razorpay  # type: ignore
+    _razorpay_import_ok = True
+except Exception:  # ImportError or runtime import issues
+    razorpay = None  # type: ignore
+    _razorpay_import_ok = False
 import logging
 import time
 from flask import current_app, flash
@@ -21,10 +26,14 @@ def get_razorpay_config():
     
     return key_id, key_secret
 
-# Initialize Razorpay client with configuration
+# Initialize Razorpay client with configuration (only if import and keys are OK)
 key_id, key_secret = get_razorpay_config()
-if key_id and key_secret:
-    razorpay_client = razorpay.Client(auth=(key_id, key_secret))
+if _razorpay_import_ok and key_id and key_secret:
+    try:
+        razorpay_client = razorpay.Client(auth=(key_id, key_secret))  # type: ignore[attr-defined]
+    except Exception:
+        razorpay_client = None
+        logging.error("Failed to initialize Razorpay client")
 else:
     razorpay_client = None
 
@@ -96,15 +105,28 @@ class RazorpayService:
             if not user:
                 raise ValueError("User not found")
             
-            # Prepare customer details
-            if not customer_details:
-                customer_details = {
+            # Ensure we have a Razorpay customer_id for this user
+            # Reuse existing subscription record or create one
+            existing_subscription = Subscription.query.filter_by(user_id=user_id).first()
+            customer_id = None
+            if existing_subscription and existing_subscription.razorpay_customer_id:
+                customer_id = existing_subscription.razorpay_customer_id
+            else:
+                # Create Razorpay customer and persist locally
+                customer_payload = customer_details or {
                     'name': user.business_name or user.username,
                     'email': user.email,
                     'contact': getattr(user, 'phone', '9999999999')
                 }
-            
-            # Create subscription
+                customer = RazorpayService.create_customer(customer_payload)
+                customer_id = customer.get('id')
+                if not existing_subscription:
+                    existing_subscription = Subscription(user_id=user_id)
+                    db.session.add(existing_subscription)
+                existing_subscription.razorpay_customer_id = customer_id
+                db.session.commit()
+
+            # Create subscription (Razorpay expects customer_id, not a full customer object)
             subscription_data = {
                 'plan_id': plan['razorpay_plan_id'],
                 'customer_notify': 1,
@@ -115,12 +137,9 @@ class RazorpayService:
                     'user_id': str(user_id),
                     'plan_id': plan_id,
                     'user_email': user.email
-                }
+                },
+                'customer_id': customer_id
             }
-            
-            # Add customer details if provided
-            if customer_details:
-                subscription_data['customer'] = customer_details
             
             subscription = razorpay_client.subscription.create(subscription_data)
             

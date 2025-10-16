@@ -114,7 +114,8 @@
                         <button class="btn btn-success btn-lg" disabled>
                             <i class="fas fa-crown me-2"></i>Active Subscription
                         </button>
-                        <a href="{{ url_for('payment.portal') }}" class="btn btn-outline-primary">
+                        <!-- Portal removed; Stripe disabled -->
+                        <a href="{{ url_for('payment.plans') }}" class="btn btn-outline-primary">
                             <i class="fas fa-cog me-2"></i>Manage Billing
                         </a>
                     </div>

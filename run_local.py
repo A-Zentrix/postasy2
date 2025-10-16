@@ -7,6 +7,7 @@ This script sets up the environment and runs the application locally
 import os
 import sys
 import logging
+import socket
 from pathlib import Path
 
 # Configure logging
@@ -48,7 +49,6 @@ def check_dependencies():
         ('flask_wtf', 'flask-wtf'),
         ('PIL', 'pillow'),
         ('google.genai', 'google-genai'),
-        ('stripe', 'stripe'),
         ('werkzeug', 'werkzeug'),
         ('jinja2', 'jinja2')
     ]
@@ -97,7 +97,23 @@ def run_application():
         from app import app
         
         print("✅ Application loaded successfully!")
-        print("📍 Server will be available at: http://localhost:5000")
+        # Resolve port intelligently
+        def is_port_in_use(port: int) -> bool:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.settimeout(0.2)
+                return s.connect_ex(("127.0.0.1", port)) == 0
+
+        def find_free_port(start_port: int, max_tries: int = 50) -> int:
+            candidate = start_port
+            tries = 0
+            while tries < max_tries and is_port_in_use(candidate):
+                candidate += 1
+                tries += 1
+            return candidate
+
+        preferred_port = int(os.environ.get('PORT', '5000'))
+        port = preferred_port if not is_port_in_use(preferred_port) else find_free_port(preferred_port)
+        print(f"📍 Server will be available at: http://localhost:{port}")
         print("🛑 Press Ctrl+C to stop the server")
         print("-" * 50)
         
@@ -105,7 +121,7 @@ def run_application():
         app.run(
             debug=True,
             host='0.0.0.0',
-            port=8000,
+            port=port,
             use_reloader=True
         )
         

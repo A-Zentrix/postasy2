@@ -1699,26 +1699,7 @@ def success():
     
     return redirect(url_for('main.dashboard'))
 
-@payment_bp.route('/webhook', methods=['POST'])
-def webhook():
-    """Handle Razorpay webhook events"""
-    try:
-        payload = request.get_data()
-        signature = request.headers.get('X-Razorpay-Signature')
-        
-        if not signature:
-            return jsonify({'status': 'error', 'message': 'No signature provided'}), 400
-        
-        result = RazorpayService.handle_webhook(payload, signature)
-        
-        if result['status'] == 'success':
-            return jsonify(result), 200
-        else:
-            return jsonify(result), 400
-            
-    except Exception as e:
-        logging.error(f"Webhook error: {str(e)}")
-        return jsonify({'status': 'error', 'message': str(e)}), 500
+# Stripe integration removed
 
 @payment_bp.route('/cancel')
 @login_required
@@ -1727,38 +1708,9 @@ def cancel():
     flash('Payment canceled. You can upgrade anytime.', 'info')
     return redirect(url_for('payment.plans'))
 
-@payment_bp.route('/portal')
-@login_required
-def portal():
-    """Redirect to Stripe customer portal"""
-    if current_user.subscription and current_user.subscription.stripe_customer_id:
-        try:
-            session = StripeService.create_customer_portal_session(
-                current_user.subscription.stripe_customer_id
-            )
-            return redirect(session.url, code=303)
-        except Exception as e:
-            flash(f'Error accessing billing portal: {str(e)}', 'danger')
-    else:
-        flash('No active subscription found.', 'info')
-    
-    return redirect(url_for('profile.manage'))
+# Stripe integration removed
 
-@payment_bp.route('/webhook', methods=['POST'])
-def webhook():
-    """Handle Stripe webhooks"""
-    payload = request.get_data()
-    sig_header = request.headers.get('Stripe-Signature')
-    
-    try:
-        result = StripeService.handle_webhook(payload, sig_header)
-        if result['status'] == 'success':
-            return 'Success', 200
-        else:
-            return f"Error: {result.get('message', 'Unknown error')}", 400
-    except Exception as e:
-        logging.error(f"Webhook error: {str(e)}")
-        return 'Error', 400
+# Stripe integration removed
 
 # Legacy subscription routes (for backward compatibility)
 @subscription_bp.route('/plans')
