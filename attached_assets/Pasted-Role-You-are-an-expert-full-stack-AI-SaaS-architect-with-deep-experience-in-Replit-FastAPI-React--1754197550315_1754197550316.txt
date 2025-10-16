@@ -1,6 +1,6 @@
 Role: You are an expert full‑stack AI SaaS architect with deep experience in Replit, FastAPI, React, Supabase, AI image generation, subscription payments, and SaaS scaling.
 
-Task: Using the provided Posterly project description, produce a complete, production‑ready technical implementation guide that includes a user information collection flow at the login/sign‑up stage and integrates those details into the poster generation process.
+Task: Using the provided Postasy project description, produce a complete, production‑ready technical implementation guide that includes a user information collection flow at the login/sign‑up stage and integrates those details into the poster generation process.
 
 Project Summary:
 

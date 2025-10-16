@@ -7,8 +7,8 @@
     <div class="row justify-content-center">
         <div class="col-md-10">
             <div class="text-center mb-5">
-                <h1 class="display-4 mb-3">Choose Your Plan</h1>
-                <p class="lead text-muted">Unlock the full potential of AI-powered poster creation</p>
+                <h1 class="display-4 mb-3">Plans that scale with you</h1>
+                <p class="lead text-muted">Choose the plan that fits your workflow. Prices in INR.</p>
             </div>
 
             <div class="row g-4">
@@ -21,13 +21,13 @@
                         </div>
                         {% endif %}
                         
-                        <div class="card-header text-center {% if plan_id == 'premium' %}bg-gradient{% endif %}">
+                        <div class="card-header text-center {% if plan_id == 'agency' %}bg-gradient{% endif %}">
                             <h3 class="card-title">{{ plan.name }}</h3>
                             <div class="display-4 fw-bold">
                                 {% if plan.price == 0 %}
                                 Free
                                 {% else %}
-                                ${{ "%.2f"|format(plan.price) }}
+                                ₹{{ plan.price }}
                                 <small class="text-muted fs-6">/month</small>
                                 {% endif %}
                             </div>
@@ -60,14 +60,14 @@
                                     Free Plan
                                 </button>
                             {% else %}
-                                <a href="{{ url_for('payment.checkout', plan_id=plan_id) }}" 
-                                   class="btn btn-primary btn-lg">
+                                <button onclick="initiatePayment('{{ plan_id }}')" 
+                                        class="btn btn-primary btn-lg">
                                     {% if current_plan == 'free' %}
-                                        Upgrade Now
+                                        Choose {{ plan.name }}
                                     {% else %}
-                                        Switch Plan
+                                        Switch to {{ plan.name }}
                                     {% endif %}
-                                </a>
+                                </button>
                             {% endif %}
                         </div>
                     </div>
@@ -183,4 +183,75 @@
         </div>
     </div>
 </div>
+
+<!-- Razorpay Checkout Script -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+function initiatePayment(planId) {
+    // Show loading state
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+    button.disabled = true;
+    
+    // Create subscription
+    fetch(`/payment/checkout/${planId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Open Razorpay checkout
+            const options = {
+                key: '{{ config.RAZORPAY_KEY_ID }}',
+                subscription_id: data.subscription_id,
+                name: 'Postasy',
+                description: `Subscription to ${planId} plan`,
+                image: 'https://i.ibb.co/1tKz4L94/Whats-App-Image-2025-08-09-at-17-54-24-61eeb336.jpg',
+                prefill: {
+                    name: '{{ current_user.full_name or current_user.username }}',
+                    email: '{{ current_user.email }}',
+                    contact: '{{ current_user.phone or "9999999999" }}'
+                },
+                notes: {
+                    plan_id: planId,
+                    user_id: '{{ current_user.id }}'
+                },
+                theme: {
+                    color: '#3a6baf'
+                },
+                handler: function (response) {
+                    // Redirect to success page with payment details
+                    window.location.href = `/payment/success?payment_id=${response.razorpay_payment_id}&subscription_id=${response.razorpay_subscription_id}&razorpay_signature=${response.razorpay_signature}&razorpay_order_id=${response.razorpay_order_id}`;
+                },
+                modal: {
+                    ondismiss: function() {
+                        // Reset button state on modal close
+                        button.innerHTML = originalText;
+                        button.disabled = false;
+                    }
+                }
+            };
+            
+            const rzp = new Razorpay(options);
+            rzp.open();
+        } else {
+            // Show error message
+            alert('Error: ' + data.error);
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while processing your request. Please try again.');
+        button.innerHTML = originalText;
+        button.disabled = false;
+    });
+}
+</script>
 {% endblock %}

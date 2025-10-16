@@ -1,4 +1,4 @@
-# Delete Functionality Fix - Posterly Gallery
+# Delete Functionality Fix - Postasy Gallery
 
 ## Overview
 The delete button functionality has been fixed and enhanced with proper error handling, fallback mechanisms, and debugging capabilities.

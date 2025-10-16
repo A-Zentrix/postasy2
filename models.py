@@ -27,7 +27,7 @@ class User(UserMixin, db.Model):
     # Account status
     is_premium = db.Column(db.Boolean, default=False)
     profile_completed = db.Column(db.Boolean, default=False)
-    stripe_customer_id = db.Column(db.String(100))
+    razorpay_customer_id = db.Column(db.String(100))
     
     # MASTER ADMIN FLAG - For internal testing and admin access
     # This user bypasses all usage limits and has unlimited access
@@ -53,7 +53,7 @@ class User(UserMixin, db.Model):
     def has_premium_access(self):
         """Check if user has premium access"""
         plan = self.get_subscription_plan()
-        return plan in ['pro', 'premium'] or self.is_master_admin
+        return plan in ['starter', 'pro', 'agency'] or self.is_master_admin
     
     def set_password(self, password):
         """Set password with proper hashing"""
@@ -180,9 +180,10 @@ class Poster(db.Model):
 class Subscription(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    stripe_customer_id = db.Column(db.String(100))
-    stripe_subscription_id = db.Column(db.String(100), unique=True)
-    plan_id = db.Column(db.String(20), default='free')  # free, pro, premium
+    razorpay_customer_id = db.Column(db.String(100))
+    razorpay_subscription_id = db.Column(db.String(100), unique=True)
+    razorpay_payment_id = db.Column(db.String(100))
+    plan_id = db.Column(db.String(20), default='free')  # free, starter, pro, agency
     status = db.Column(db.String(20), default='active')  # active, canceled, past_due, etc.
     current_period_start = db.Column(db.DateTime)
     current_period_end = db.Column(db.DateTime)

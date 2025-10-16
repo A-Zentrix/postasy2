@@ -9,7 +9,7 @@ class Config:
     DEBUG = True
     
     # Database Configuration
-    DATABASE_URL = "sqlite:///posterly.db"
+    DATABASE_URL = "sqlite:///postasy.db"
     
     # Upload Configuration
     UPLOAD_FOLDER = "static/uploads"
@@ -26,9 +26,11 @@ class Config:
     
     # API Keys (Replace with your actual keys for production)
     GEMINI_API_KEY = "AIzaSyARLgg6blfmauGUDPSwo_mHMrpLHLP22uE"
-    STRIPE_SECRET_KEY = "sk_test_your-stripe-secret-key-here"
-    STRIPE_PUBLISHABLE_KEY = "pk_test_your-stripe-publishable-key-here"
-    STRIPE_WEBHOOK_SECRET = "whsec_your-webhook-secret-here"
+    
+    # Razorpay Configuration
+    RAZORPAY_KEY_ID = "rzp_live_RR1Xu8K6RsDvdF"
+    RAZORPAY_KEY_SECRET = "ij24LrPwGcHLBSEKS12EHRYe"
+    RAZORPAY_WEBHOOK_SECRET = "your-webhook-secret-here"
     
     # OAuth Configuration (Optional - for social login)
     GOOGLE_CLIENT_ID = "your-google-client-id-here"
@@ -53,25 +55,35 @@ class Config:
     DEFAULT_POSTER_HEIGHT = 1024
     WATERMARK_TEXT = "Postasy - Upgrade for Watermark-Free"
     
-    # Subscription Plans (Local Development)
+    # Subscription Plans (INR Pricing)
     SUBSCRIPTION_PLANS = {
         'free': {
             'name': 'Free Plan',
             'price': 0,
-            'features': ['5 posters per month', 'Watermarked downloads', 'Basic templates'],
-            'stripe_price_id': None
+            'currency': 'INR',
+            'features': ['10 Templates/month', 'Watermarked downloads', 'No AI features', 'No Scheduling'],
+            'razorpay_plan_id': None
+        },
+        'starter': {
+            'name': 'Starter',
+            'price': 99,
+            'currency': 'INR',
+            'features': ['50 Templates/month', 'Remove watermark', 'Scheduler (5 posts/week)', 'Pre-made trending templates'],
+            'razorpay_plan_id': 'plan_RT1vLSXcKS8mLI'  # Razorpay Starter plan ID
         },
         'pro': {
             'name': 'Pro Plan',
-            'price': 9.99,
-            'features': ['Unlimited posters', 'Watermark-free downloads', 'Premium templates', 'High-res exports'],
-            'stripe_price_id': 'price_test_pro_plan'  # Test price ID
+            'price': 399,
+            'currency': 'INR',
+            'features': ['Unlimited Templates', 'AI Brand Assistant', 'AI Captions + Hashtags', 'Scheduler (Unlimited)', 'Instagram Performance Dashboard'],
+            'razorpay_plan_id': 'plan_RT1vhhl2rcwvBA'  # Razorpay Pro plan ID
         },
-        'premium': {
-            'name': 'Premium Plan', 
-            'price': 19.99,
-            'features': ['Everything in Pro', 'Priority support', 'Advanced AI features', 'Custom branding'],
-            'stripe_price_id': 'price_test_premium_plan'  # Test price ID
+        'agency': {
+            'name': 'Agency',
+            'price': 999,
+            'currency': 'INR',
+            'features': ['Everything in Pro', '5 Client Accounts', 'Approval Workflow', 'White-label reports', 'API Access'],
+            'razorpay_plan_id': 'plan_RT1vv3mBjeH0NH'  # Razorpay Agency plan ID
         }
     }
 
@@ -87,9 +99,9 @@ class ProductionConfig(Config):
     # Override with environment variables in production
     SECRET_KEY = os.environ.get('SECRET_KEY', Config.SECRET_KEY)
     GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', Config.GEMINI_API_KEY)
-    STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', Config.STRIPE_SECRET_KEY)
-    STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', Config.STRIPE_PUBLISHABLE_KEY)
-    STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', Config.STRIPE_WEBHOOK_SECRET)
+    RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID', Config.RAZORPAY_KEY_ID)
+    RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET', Config.RAZORPAY_KEY_SECRET)
+    RAZORPAY_WEBHOOK_SECRET = os.environ.get('RAZORPAY_WEBHOOK_SECRET', Config.RAZORPAY_WEBHOOK_SECRET)
 
 class TestingConfig(Config):
     """Testing configuration"""

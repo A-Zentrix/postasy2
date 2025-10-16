@@ -127,7 +127,7 @@ Edit `config.py` to customize:
 
 ### Database
 ```python
-DATABASE_URL = "sqlite:///posterly.db"  # SQLite for local development
+DATABASE_URL = "sqlite:///postasy.db"  # SQLite for local development
 ```
 
 ### Upload Settings
@@ -150,7 +150,7 @@ WTF_CSRF_ENABLED = False  # Disabled for local development
 python -c "from app import app, db; app.app_context().push(); db.create_all()"
 
 # Reset database
-rm posterly.db
+rm postasy.db
 python -c "from app import app, db; app.app_context().push(); db.create_all()"
 ```
 
@@ -176,7 +176,7 @@ pip install -r requirements.txt
 #### 2. Database Errors
 ```bash
 # Reset the database
-rm posterly.db
+rm postasy.db
 python -c "from app import app, db; app.app_context().push(); db.create_all()"
 ```
 

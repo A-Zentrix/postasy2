@@ -13,18 +13,18 @@ def test_master_admin():
     
     with app.app_context():
         # Test authentication with email
-        print("📧 Testing with email: admin@posterly.ai")
-        result1 = authenticate_master_admin("admin@posterly.ai", "MasterKey#2025")
+        print("📧 Testing with email: admin@postasy.ai")
+        result1 = authenticate_master_admin("admin@postasy.ai", "MasterKey#2025")
         print(f"✅ Email authentication: {result1}")
         
         # Test authentication with username
-        print("👤 Testing with username: posterly_admin")
-        result2 = authenticate_master_admin("posterly_admin", "MasterKey#2025")
+        print("👤 Testing with username: postasy_admin")
+        result2 = authenticate_master_admin("postasy_admin", "MasterKey#2025")
         print(f"✅ Username authentication: {result2}")
         
         # Test wrong password
         print("❌ Testing with wrong password")
-        result3 = authenticate_master_admin("admin@posterly.ai", "WrongPassword")
+        result3 = authenticate_master_admin("admin@postasy.ai", "WrongPassword")
         print(f"❌ Wrong password test: {result3}")
         
         # Test wrong username

@@ -12,7 +12,7 @@ def update_master_admin():
     
     with app.app_context():
         # Find master admin user
-        master_user = User.query.filter_by(email="admin@posterly.ai").first()
+        master_user = User.query.filter_by(email="admin@postasy.ai").first()
         
         if master_user:
             print("✅ Master admin user found!")

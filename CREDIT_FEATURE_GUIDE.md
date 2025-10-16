@@ -1,4 +1,4 @@
-# Credit Feature Guide - Posterly Editor
+# Credit Feature Guide - Postasy Editor
 
 ## Overview
 The poster editor now includes a comprehensive credit system that allows users to easily add their business information to posters with clear, readable text formatting.
@@ -97,7 +97,7 @@ Users can select from the following credit fields:
 
 ### Professional Output
 - Credit information appears in a professional format
-- Consistent branding with the Posterly theme
+- Consistent branding with the Postasy theme
 - Editable text objects for further customization
 - Export-ready formatting
 

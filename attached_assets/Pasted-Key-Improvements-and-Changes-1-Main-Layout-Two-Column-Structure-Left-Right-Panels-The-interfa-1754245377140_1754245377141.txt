@@ -18,4 +18,4 @@ The document title ("hello" in the original image) is now prominently displayed 
 The primary action buttons, "Save Changes" (green, primary button) and "Back to Gallery" (outline, secondary button), are moved to the top header for high visibility and easy access.
 Organized Panels: The left panel uses collapsible sections (accordions) for Layers, Properties, and Export. This keeps the workspace tidy, allowing the user to focus on one task at a time.
 Consistent Buttons: All buttons, especially the export options ("Export as PNG", "JPG", "PDF"), are now styled identically and are neatly stacked for better alignment and readability.
-By implementing these changes, the "Posterly" editor will feel more professional, intuitive, and efficient, providing a much-improved experience for your users.
+By implementing these changes, the "Postasy" editor will feel more professional, intuitive, and efficient, providing a much-improved experience for your users.

@@ -393,4 +393,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Export utilities for global use
-window.PosterlyUtils = Utils;
+window.PostasyUtils = Utils;

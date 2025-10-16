@@ -10,7 +10,7 @@ from models import db, User, Poster, Subscription
 from forms import LoginForm, RegistrationForm, ProfileSetupForm, PosterGenerationForm, ProfileEditForm
 from gemini_service import generate_poster_image, validate_prompt
 from image_service import add_watermark, add_profile_overlay, save_uploaded_file, generate_filename, add_logo_to_poster_top
-from stripe_service import StripeService
+from razorpay_service import RazorpayService
 
 def render_standalone_editor(poster, width, height, current_user):
     """
@@ -981,7 +981,7 @@ def render_standalone_editor(poster, width, height, current_user):
             }}
         }});
 
-        console.log('🎨 Posterly Standalone Editor script loaded and ready!');
+        console.log('🎨 Postasy Standalone Editor script loaded and ready!');
     </script>
 </body>
 </html>'''
@@ -1001,12 +1001,12 @@ payment_bp = Blueprint('payment', __name__, url_prefix='/payment')
 def index():
     if current_user.is_authenticated:
         return redirect(url_for('main.dashboard'))
-    return redirect(url_for('main.landing'))
+    return render_template('landing.html')
 
 @main_bp.route('/landing')
 def landing():
-    """Modern landing page for marketing"""
-    return render_template('landing.html')
+    """Redirect from old landing URL to root"""
+    return redirect(url_for('main.index'))
 
 # Marketing info pages
 @main_bp.route('/pricing')
@@ -1098,11 +1098,11 @@ def dashboard():
 def authenticate_master_admin(username, password):
     """
     MASTER ADMIN LOGIN - For internal testing and admin access
-    Credentials: admin@posterly.ai / MasterKey#2025
+    Credentials: admin@postasy.ai / MasterKey#2025
     This bypasses all usage limits and provides unlimited access
     """
-    MASTER_EMAIL = "admin@posterly.ai"
-    MASTER_USERNAME = "posterly_admin"
+    MASTER_EMAIL = "admin@postasy.ai"
+    MASTER_USERNAME = "postasy_admin"
     MASTER_PASSWORD = "MasterKey#2025"
     
     # Check if username matches either the email or the username
@@ -1113,8 +1113,8 @@ def get_or_create_master_admin():
     Get or create the master admin user in the database
     This user is flagged as is_master_admin=True and has unlimited access
     """
-    MASTER_EMAIL = "admin@posterly.ai"
-    MASTER_USERNAME = "posterly_admin"
+    MASTER_EMAIL = "admin@postasy.ai"
+    MASTER_USERNAME = "postasy_admin"
     
     # Check if master admin already exists
     master_user = User.query.filter_by(email=MASTER_EMAIL).first()
@@ -1125,7 +1125,7 @@ def get_or_create_master_admin():
         master_user.username = MASTER_USERNAME
         master_user.email = MASTER_EMAIL
         master_user.full_name = "Master Administrator"
-        master_user.business_name = "Posterly Internal"
+        master_user.business_name = "Postasy Internal"
         master_user.is_premium = True
         master_user.is_master_admin = True  # This is the key flag for unlimited access
         master_user.profile_completed = True
@@ -1655,35 +1655,76 @@ def public_gallery():
 @login_required
 def plans():
     """Display subscription plans"""
-    plans = StripeService.get_plans()
+    plans = RazorpayService.get_plans()
     current_plan = current_user.get_subscription_plan()
     return render_template('subscription_plans.html', plans=plans, current_plan=current_plan)
 
 @payment_bp.route('/checkout/<plan_id>')
 @login_required
 def checkout(plan_id):
-    """Create checkout session for selected plan"""
+    """Create Razorpay subscription for selected plan"""
     try:
-        session = StripeService.create_checkout_session(plan_id, current_user.id)
-        return redirect(session.url or url_for('payment.plans'), code=303)
+        subscription = RazorpayService.create_subscription(plan_id, current_user.id)
+        
+        # Return subscription details for frontend integration
+        return jsonify({
+            'success': True,
+            'subscription_id': subscription['id'],
+            'short_url': subscription.get('short_url'),
+            'status': subscription['status'],
+            'plan_id': plan_id
+        })
     except Exception as e:
-        flash(f'Error creating checkout session: {str(e)}', 'danger')
-        return redirect(url_for('payment.plans'))
+        flash(f'Error creating subscription: {str(e)}', 'danger')
+        return jsonify({'success': False, 'error': str(e)}), 400
 
 @payment_bp.route('/success')
 @login_required
 def success():
     """Handle successful payment"""
-    session_id = request.args.get('session_id')
-    if session_id:
-        flash('Subscription activated successfully! Welcome to Premium!', 'success')
+    payment_id = request.args.get('payment_id')
+    subscription_id = request.args.get('subscription_id')
+    
+    if payment_id and subscription_id:
+        # Verify payment signature
+        razorpay_signature = request.args.get('razorpay_signature')
+        razorpay_order_id = request.args.get('razorpay_order_id')
+        
+        if RazorpayService.verify_payment_signature(payment_id, razorpay_order_id, razorpay_signature):
+            flash('Subscription activated successfully! Welcome to Premium!', 'success')
+        else:
+            flash('Payment verification failed. Please contact support.', 'danger')
+    else:
+        flash('Payment details missing. Please contact support.', 'warning')
+    
     return redirect(url_for('main.dashboard'))
+
+@payment_bp.route('/webhook', methods=['POST'])
+def webhook():
+    """Handle Razorpay webhook events"""
+    try:
+        payload = request.get_data()
+        signature = request.headers.get('X-Razorpay-Signature')
+        
+        if not signature:
+            return jsonify({'status': 'error', 'message': 'No signature provided'}), 400
+        
+        result = RazorpayService.handle_webhook(payload, signature)
+        
+        if result['status'] == 'success':
+            return jsonify(result), 200
+        else:
+            return jsonify(result), 400
+            
+    except Exception as e:
+        logging.error(f"Webhook error: {str(e)}")
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 @payment_bp.route('/cancel')
 @login_required
 def cancel():
     """Handle canceled payment"""
-    flash('Checkout canceled. You can upgrade anytime.', 'info')
+    flash('Payment canceled. You can upgrade anytime.', 'info')
     return redirect(url_for('payment.plans'))
 
 @payment_bp.route('/portal')

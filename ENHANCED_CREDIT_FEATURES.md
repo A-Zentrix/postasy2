@@ -1,4 +1,4 @@
-# Enhanced Credit Features Guide - Posterly Editor
+# Enhanced Credit Features Guide - Postasy Editor
 
 ## Overview
 The poster editor now includes comprehensive credit features that allow users to add their complete business information to posters, including company logos, email addresses, and user IDs. The system intelligently fills white space around posters with professional-looking text and images.

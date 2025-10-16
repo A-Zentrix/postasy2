@@ -12,7 +12,7 @@ def check_master_admin():
     
     with app.app_context():
         # Check if master admin exists
-        master_user = User.query.filter_by(email="admin@posterly.ai").first()
+        master_user = User.query.filter_by(email="admin@postasy.ai").first()
         
         if master_user:
             print("✅ Master admin user found!")
@@ -34,10 +34,10 @@ def check_master_admin():
             
             # Create master admin
             master_user = User()
-            master_user.username = "posterly_admin"
-            master_user.email = "admin@posterly.ai"
+            master_user.username = "postasy_admin"
+            master_user.email = "admin@postasy.ai"
             master_user.full_name = "Master Administrator"
-            master_user.business_name = "Posterly Internal"
+            master_user.business_name = "Postasy Internal"
             master_user.is_premium = True
             master_user.is_master_admin = True
             master_user.profile_completed = True

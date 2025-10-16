@@ -1,4 +1,4 @@
-# Auto-Fill White Space Feature Guide - Posterly Editor
+# Auto-Fill White Space Feature Guide - Postasy Editor
 
 ## Overview
 The poster editor now includes an intelligent auto-fill feature that automatically adds user profile information to empty areas of posters, utilizing the fields that were selected during the poster generation process.

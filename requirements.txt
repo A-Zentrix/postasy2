@@ -24,6 +24,7 @@ google-genai>=1.28.0
 
 # Payment Processing
 stripe>=12.4.0
+razorpay>=1.4.2
 
 # Email Validation
 email-validator>=2.2.0

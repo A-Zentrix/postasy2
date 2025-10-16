@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Posterly Editor</title>
+    <title>Postasy Editor</title>
     <link rel="stylesheet" href="style.css">
     <!-- Using a popular icon library like Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -16,8 +16,8 @@
         <!-- ========================== -->
         <aside class="left-panel">
             <div class="logo-header">
-                <img src="path/to/your/logo.png" alt="Posterly Logo">
-                <h2>Posterly</h2>
+                <img src="path/to/your/logo.png" alt="Postasy Logo">
+                <h2>Postasy</h2>
             </div>
 
             <div class="main-tools">

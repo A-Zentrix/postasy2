@@ -1,4 +1,4 @@
-# White Space Filling & Delete Poster Guide - Posterly Editor
+# White Space Filling & Delete Poster Guide - Postasy Editor
 
 ## Overview
 The poster editor now includes enhanced white space filling capabilities that completely fill empty areas with company information, and a delete poster functionality for easy poster management.

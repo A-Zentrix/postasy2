@@ -26,12 +26,12 @@ def create_app(config_name='development'):
     
     # Set environment variables from config for services that need them
     os.environ['GEMINI_API_KEY'] = app.config.get('GEMINI_API_KEY', '')
-    os.environ['STRIPE_SECRET_KEY'] = app.config.get('STRIPE_SECRET_KEY', '')
-    os.environ['STRIPE_PUBLISHABLE_KEY'] = app.config.get('STRIPE_PUBLISHABLE_KEY', '')
-    os.environ['STRIPE_WEBHOOK_SECRET'] = app.config.get('STRIPE_WEBHOOK_SECRET', '')
+    os.environ['RAZORPAY_KEY_ID'] = app.config.get('RAZORPAY_KEY_ID', '')
+    os.environ['RAZORPAY_KEY_SECRET'] = app.config.get('RAZORPAY_KEY_SECRET', '')
+    os.environ['RAZORPAY_WEBHOOK_SECRET'] = app.config.get('RAZORPAY_WEBHOOK_SECRET', '')
     
     # Database configuration
-    app.config["SQLALCHEMY_DATABASE_URI"] = app.config.get("DATABASE_URL", "sqlite:///posterly.db")
+    app.config["SQLALCHEMY_DATABASE_URI"] = app.config.get("DATABASE_URL", "sqlite:///postasy.db")
     app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
         "pool_recycle": 300,
         "pool_pre_ping": True,
@@ -42,11 +42,12 @@ def create_app(config_name='development'):
     app.config["UPLOAD_FOLDER"] = app.config.get("UPLOAD_FOLDER", "static/uploads")
     app.config["MAX_CONTENT_LENGTH"] = app.config.get("MAX_CONTENT_LENGTH", 16 * 1024 * 1024)
 
-    # Expose branding to templates
+    # Expose branding and config to templates
     @app.context_processor
     def inject_branding():
         return {
-            'brand_logo_url': app.config.get('LOGO_URL')
+            'brand_logo_url': app.config.get('LOGO_URL'),
+            'config': app.config
         }
     
     # Initialize extensions
